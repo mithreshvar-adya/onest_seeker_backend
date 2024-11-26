@@ -1,16 +1,13 @@
 import service from './service';
-import { apiResponse, JsonWebToken } from "@adya/shared";
-
-
+import { apiResponse } from "@adya/shared";
 
 const newService = service.getInstance();
-
-const jwtInstance = new JsonWebToken();
 
 class Handler {
     private static instance: Handler | null = null;
 
     // Private constructor to prevent direct instantiation
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     private constructor() { }
 
     // Static method to get the singleton instance
@@ -21,95 +18,76 @@ class Handler {
         return this.instance;
     }
 
-    async create(req, res, next) {
+    private handleError(res, err) {
+        console.log("Handler Error ===========>>>> ", err);
+        return res.status(500).json(apiResponse.FAILURE_RESP({}, {
+            name: "Handler Error",
+            message: `${err}`
+        }, "Handler error"));
+    }
+
+    async create(req, res) {
         try {
-            let { body } = req
-            console.log(body)
-            let resp = await newService.create(body)
-            return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "Notification Template Created Successfully"))
+            const { body } = req;
+            const resp = await newService.create(body);
+            return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "Notification Template Created Successfully"));
         } catch (err) {
-            console.log("Handler Error ===========>>>> ", err)
-            return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-                name: "Handler Error",
-                message: `${err}`
-            }, "Handler error"))
+            return this.handleError(res, err);
         }
     }
 
-    async get(req, res, next) {
+    async get(req, res) {
         try {
-            let { body, params } = req
-            let resp = await newService.get({ id: params?.id })
-            return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "success"))
+            const { params } = req;
+            const resp = await newService.get({ id: params?.id });
+            return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "success"));
         } catch (err) {
-            console.log("Handler Error ===========>>>> ", err)
-            return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-                name: "Handler Error",
-                message: `${err}`
-            }, "Handler error"))
+            return this.handleError(res, err);
         }
     }
 
-    async update(req, res, next) {
+    async update(req, res) {
         try {
-            let { body, params } = req
-            
-            let resp = await newService.get({ id: params?.id })
+            const { body, params } = req;
+            const resp = await newService.get({ id: params?.id });
             if (resp) {
-                let query = {
-                    id: resp?.id
-                }
-                await newService.update(query, body)
+                const query = { id: resp?.id };
+                await newService.update(query, body);
             } else {
-                return res.status(500).json(apiResponse.FAILURE_RESP({}, {
+                return res.status(404).json(apiResponse.FAILURE_RESP({}, {
                     name: "Record Not Found Error",
                     message: `Record Not Found`
-                }, "Record Not Found"))
+                }, "Record Not Found"));
             }
-            return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "success"))
+            return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "success"));
         } catch (err) {
-            console.log("Handler Error ===========>>>> ", err)
-            return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-                name: "Handler Error",
-                message: `${err}`
-            }, "Handler error"))
+            return this.handleError(res, err);
         }
     }
 
-    async list(req, res, next) {
+    async list(req, res) {
         try {
-            let { query } = req
-            let filterQuery = {}
-            let page_no = parseInt(query?.page_no) || 1;
-            let per_page = parseInt(query?.per_page) || 10;
-            let sort = {}
-            let resp = await newService.list(filterQuery, page_no, per_page, sort)
-            return res.status(200).json(apiResponse.SUCCESS_RESP_WITH_PAGINATION(resp?.pagination, resp?.data, "Data retrieved Successfully"))
+            const { query } = req;
+            const filterQuery = {};
+            const page_no = parseInt(query?.page_no) || 1;
+            const per_page = parseInt(query?.per_page) || 10;
+            const sort = {};
+            const resp = await newService.list(filterQuery, page_no, per_page, sort);
+            return res.status(200).json(apiResponse.SUCCESS_RESP_WITH_PAGINATION(resp?.pagination, resp?.data, "Data retrieved Successfully"));
         } catch (err) {
-            console.log("Handler Error ===========>>>> ", err)
-            return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-                name: "Handler Error",
-                message: `${err}`
-            }, "Handler error"))
+            return this.handleError(res, err);
         }
     }
 
-    // async delete(req, res, next) {
+    // async delete(req, res) {
     //     try {
-    //         let { params } = req
-    //         let resp = await newService.delete({ id: parseInt(params?.id) })
-    //         return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "success"))
+    //         let { params } = req;
+    //         let resp = await newService.delete({ id: parseInt(params?.id) });
+    //         return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "success"));
     //     } catch (err) {
-    //         console.log("Handler Error ===========>>>> ", err)
-    //         return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-    //             name: "Handler Error",
-    //             message: `${err}`
-    //         }, "Handler error"))
+    //         return this.handleError(res, err);
     //     }
     // }
-
-
-
 }
 
-export default Handler
+export default Handler;

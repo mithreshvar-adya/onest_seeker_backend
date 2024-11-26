@@ -6,12 +6,12 @@ const GetClientFeedback = {
   comments: true,
 };
 
-const createUpdateDeleteSelectedFields = {
+const CreateUpdateDeleteSelectedFields = {
   id: true,
 }
 
 
 export {
   GetClientFeedback,
-  createUpdateDeleteSelectedFields,
+  CreateUpdateDeleteSelectedFields,
 }

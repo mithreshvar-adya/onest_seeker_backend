@@ -6,10 +6,10 @@ const router = express.Router();
 const newHandler = handler.getInstance()
 
 
-router.post('/create',newHandler.create);
-router.get('/get/:id',authentication,newHandler.get);
-router.get('/',newHandler.list)
-router.post('/:id/update',authentication,newHandler.update);
+router.post('/create', newHandler.create);
+router.get('/get/:id', authentication, newHandler.get);
+router.get('/', newHandler.list)
+router.post('/:id/update', authentication, newHandler.update);
 // router.delete('/get/:id',authentication,newHandler.delete);
 
 

@@ -6,11 +6,11 @@ import logger from "morgan";
 import controller from './controllers/router'
 import { BuyerAppConfig, global_env } from '@adya/shared'
 import { getAppConfig } from "@adya/shared";
-import {live_logs, logsAuth } from "@adya/shared";
+import { live_logs, logsAuth } from "@adya/shared";
 
 
-export default async function init(app:any){
-  
+export default async function init(app: any) {
+
 
   function customLogger(tokens, req, res) {
     const date = new Date().toISOString(); // Current timestamp
@@ -22,13 +22,13 @@ export default async function init(app:any){
     // Construct custom log message
     return `date: ${date}, ${method} ${url} ${httpVersion} ${statusCode}`;
   }
-  
+
   try {
     const appConfig: BuyerAppConfig = config.get("seeker.backend_application");
     await getAppConfig(appConfig.MONGO_DB_URL, appConfig.MONGO_DB_NAME, "BACKEND_APPLICATION", appConfig);
-    console.log("Backend_Application: ",global_env);
-    
-    
+    console.log("Backend_Application: ", global_env);
+
+
     app.use(cors());
     app.options("*", cors());
     app.use(cookieParser());
@@ -45,14 +45,14 @@ export default async function init(app:any){
 
     app.get("*", (req, res) => {
       res.status(404).json({
-          "meta": {
-              "status": false,
-              "message": "page not found"
-          },
-          "error": {
-              "name": "page not found",
-              "message": "Page not found"
-          }
+        "meta": {
+          "status": false,
+          "message": "page not found"
+        },
+        "error": {
+          "name": "page not found",
+          "message": "Page not found"
+        }
       });
     });
 
@@ -65,5 +65,5 @@ export default async function init(app:any){
   }
 };
 
-const app=express()
+const app = express()
 init(app)
