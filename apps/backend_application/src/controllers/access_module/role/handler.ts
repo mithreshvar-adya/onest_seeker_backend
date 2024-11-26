@@ -1,5 +1,5 @@
 import service from './service';
-import { apiResponse,JsonWebToken } from "@adya/shared";
+import { apiResponse, JsonWebToken } from "@adya/shared";
 
 const newService = service.getInstance();
 const jwtInstance = new JsonWebToken();
@@ -9,6 +9,7 @@ class Handler {
     private static instance: Handler | null = null;
 
     // Private constructor to prevent direct instantiation
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     private constructor() { }
 
     // Static method to get the singleton instance
@@ -19,45 +20,44 @@ class Handler {
         return this.instance;
     }
 
-    async findWithRole(req, res, next) {
+    async findWithRole(req, res) {
         try {
-          let { body, params ,headers} = req
-          let decoded = await jwtInstance.verify(headers.authorization.split(" ")[1]);
-          let getRole = await newService.findWithRole({ id: params?.id })
-          if (getRole) {
-              return res.status(200).json(apiResponse.SUCCESS_RESP(getRole, "Role Retrieved Successfully"))
-          } else {
-              return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-                  name: "Record Not Found Error",
-                  message: `Record Not Found`
-              }, "Record Not Found"))
-          }
+            const { params } = req
+            const getRole = await newService.findWithRole({ id: params?.id })
+            if (getRole) {
+                return res.status(200).json(apiResponse.SUCCESS_RESP(getRole, "Role Retrieved Successfully"))
+            } else {
+                return res.status(500).json(apiResponse.FAILURE_RESP({}, {
+                    name: "Record Not Found Error",
+                    message: `Record Not Found`
+                }, "Record Not Found"))
+            }
         } catch (err) {
-          console.log("Handler Error in findWithRole ===========>>>> ", err)
-          return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-              name: "Handler Error in findWithRole",
-              message: `${err}`
-          }, "Handler error in findWithRole"))
+            console.log("Handler Error in findWithRole ===========>>>> ", err)
+            return res.status(500).json(apiResponse.FAILURE_RESP({}, {
+                name: "Handler Error in findWithRole",
+                message: `${err}`
+            }, "Handler error in findWithRole"))
         }
-      }
+    }
 
-    async create(req, res, next) {
+    async create(req, res) {
         try {
-            let { body,headers } = req
-            let decoded = await jwtInstance.verify(headers.authorization.split(" ")[1]);
+            const { body, headers } = req
+            const decoded = await jwtInstance.verify(headers.authorization.split(" ")[1]);
             body.company_id = decoded?.company_id;
             body.created_by_id = decoded?.id;
-            console.log("company_id: ",body.company_id);
-            
+            console.log("company_id: ", body.company_id);
 
-            let getRole = await newService.get({name: body?.name})
+
+            const getRole = await newService.get({ name: body?.name })
             if (getRole) {
                 return res.status(500).json(apiResponse.FAILURE_RESP({}, {
                     name: "Role Already Exists",
                     message: `Role Already Exists`
                 }, "Record Already Exists"))
             } else {
-                let resp = await newService.create(body)
+                const resp = await newService.create(body)
                 return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "Role Created Successfully"))
             }
         } catch (err) {
@@ -69,91 +69,88 @@ class Handler {
         }
     }
 
-    async get(req, res, next) {
-      try {
-        let { body, params ,headers} = req
-        let decoded = await jwtInstance.verify(headers.authorization.split(" ")[1]);
-        let getRole = await newService.get({ id: params?.id })
-        if (getRole) {
-            return res.status(200).json(apiResponse.SUCCESS_RESP(getRole, "Role Retrieved Successfully"))
-        } else {
-            return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-                name: "Record Not Found Error",
-                message: `Record Not Found`
-            }, "Record Not Found"))
-        }
-      } catch (err) {
-        console.log("Handler Error in get ===========>>>> ", err)
-        return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-            name: "Handler Error in get",
-            message: `${err}`
-        }, "Handler error in get"))
-      }
-    }
-
-    async update(req, res, next) {
-      try {
-        let { body, params,headers } = req
-        let decoded = await jwtInstance.verify(headers.authorization.split(" ")[1]);
-        let getRole = await newService.get({ id: params?.id })
-        if (getRole) {
-            let query = {
-                id: getRole?.id
+    async get(req, res) {
+        try {
+            const { params } = req
+            const getRole = await newService.get({ id: params?.id })
+            if (getRole) {
+                return res.status(200).json(apiResponse.SUCCESS_RESP(getRole, "Role Retrieved Successfully"))
+            } else {
+                return res.status(500).json(apiResponse.FAILURE_RESP({}, {
+                    name: "Record Not Found Error",
+                    message: `Record Not Found`
+                }, "Record Not Found"))
             }
-            let response = await newService.update(query, body)
-            return res.status(200).json(apiResponse.SUCCESS_RESP(response, "Role Updated Successfully"))
-        } else {
+        } catch (err) {
+            console.log("Handler Error in get ===========>>>> ", err)
             return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-                name: "Record Not Found Error",
-                message: `Record Not Found`
-            }, "Record Not Found"))
+                name: "Handler Error in get",
+                message: `${err}`
+            }, "Handler error in get"))
         }
-      } catch (err) {
-        console.log("Handler Error in update ===========>>>> ", err)
-        return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-            name: "Handler Error in update",
-            message: `${err}`
-        }, "Handler error in update"))
-      }
     }
 
-    async list(req, res, next) {
-      try {
-        let { query,headers } = req
-        let decoded = await jwtInstance.verify(headers.authorization.split(" ")[1]);
+    async update(req, res) {
+        try {
+            const { body, params } = req
+            const getRole = await newService.get({ id: params?.id })
+            if (getRole) {
+                const query = {
+                    id: getRole?.id
+                }
+                const response = await newService.update(query, body)
+                return res.status(200).json(apiResponse.SUCCESS_RESP(response, "Role Updated Successfully"))
+            } else {
+                return res.status(500).json(apiResponse.FAILURE_RESP({}, {
+                    name: "Record Not Found Error",
+                    message: `Record Not Found`
+                }, "Record Not Found"))
+            }
+        } catch (err) {
+            console.log("Handler Error in update ===========>>>> ", err)
+            return res.status(500).json(apiResponse.FAILURE_RESP({}, {
+                name: "Handler Error in update",
+                message: `${err}`
+            }, "Handler error in update"))
+        }
+    }
 
-        let filterQuery: any = {};
-    
-        if (query?.search) {
-            filterQuery["$or"] = [
-                {
-                    "name": {
-                        $regex: query?.search,
-                        $options: 'i'
-                    }
-                },           
+    async list(req, res) {
+        try {
+            const { query } = req
+
+            const filterQuery: any = {};
+
+            if (query?.search) {
+                filterQuery["$or"] = [
+                    {
+                        "name": {
+                            $regex: query?.search,
+                            $options: 'i'
+                        }
+                    },
+                ]
+            }
+
+            const page_no = parseInt(query?.page_no) || 1;
+            const per_page = parseInt(query?.per_page) || 10;
+            const sort = [
+                { "createdAt": -1 },
+                { "updatedAt": -1 },
             ]
-        }
 
-        let page_no = parseInt(query?.page_no) || 1;
-        let per_page = parseInt(query?.per_page) || 10;
-        let sort = [
-            { "createdAt": -1 },
-            { "updatedAt": -1 },
-        ]
-        
-        let resp = await newService.list(filterQuery, page_no, per_page, sort)
-        return res.status(200).json(apiResponse.SUCCESS_RESP_WITH_PAGINATION(resp?.pagination, resp?.data, "Roles Retrieved Successfully"))
-      } catch (err) {
-        console.log("Handler Error in list ===========>>>> ", err)
-        return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-            name: "Handler Error in list",
-            message: `${err}`
-        }, "Handler error in list"))
-      }
+            const resp = await newService.list(filterQuery, page_no, per_page, sort)
+            return res.status(200).json(apiResponse.SUCCESS_RESP_WITH_PAGINATION(resp?.pagination, resp?.data, "Roles Retrieved Successfully"))
+        } catch (err) {
+            console.log("Handler Error in list ===========>>>> ", err)
+            return res.status(500).json(apiResponse.FAILURE_RESP({}, {
+                name: "Handler Error in list",
+                message: `${err}`
+            }, "Handler error in list"))
+        }
     }
 
-    // async rolelist(req, res, next) {
+    // async rolelist(req, res) {
     //     try {
     //         let { query,headers } = req
     //         let decoded = await jwtInstance.verify(headers.authorization.split(" ")[1]);
@@ -170,7 +167,7 @@ class Handler {
     //         }
 
     //         let user_role = roles[decoded?.roles?.[0]] || []
-           
+
     //         if (decoded?.roles?.[0] === "SUPER_ADMIN") {
     //             filterQuery = {
     //                 name: {  
@@ -201,8 +198,8 @@ class Handler {
     //             { "createdAt": 'desc' },
     //             { "updatedAt": 'desc' },
     //         ]
-           
-            
+
+
     //         let resp = await newService.rolelist(filterQuery, page_no, per_page, sort)
     //         return res.status(200).json(apiResponse.SUCCESS_RESP_WITH_PAGINATION(resp?.pagination, resp?.data, "Roles Retrieved Successfully"))
     //     } catch (err) {
@@ -214,30 +211,29 @@ class Handler {
     //     }
     // }
 
-    async delete(req, res, next) {
-      try {
-        let { params,headers } = req
-        let decoded = await jwtInstance.verify(headers.authorization.split(" ")[1]);
-        let getRole = await newService.get({ id: params?.id })
-        if (getRole) {
-            let query = {
-                id: getRole?.id
+    async delete(req, res) {
+        try {
+            const { params } = req
+            const getRole = await newService.get({ id: params?.id })
+            if (getRole) {
+                const query = {
+                    id: getRole?.id
+                }
+                const Delete = await newService.delete(query)
+                return res.status(200).json(apiResponse.SUCCESS_RESP(Delete, "Role Deleted Successfully"))
+            } else {
+                return res.status(500).json(apiResponse.FAILURE_RESP({}, {
+                    name: "Record Not Found Error",
+                    message: `Record Not Found`
+                }, "Record Not Found"))
             }
-            let Delete = await newService.delete(query)
-            return res.status(200).json(apiResponse.SUCCESS_RESP(Delete, "Role Deleted Successfully"))
-        } else {
+        } catch (err) {
+            console.log("Handler Error in delete ===========>>>> ", err)
             return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-                name: "Record Not Found Error",
-                message: `Record Not Found`
-            }, "Record Not Found"))
+                name: "Handler Error in delete",
+                message: `${err}`
+            }, "Handler error in delete"))
         }
-      } catch (err) {
-        console.log("Handler Error in delete ===========>>>> ", err)
-        return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-            name: "Handler Error in delete",
-            message: `${err}`
-        }, "Handler error in delete"))
-      }
     }
 
 

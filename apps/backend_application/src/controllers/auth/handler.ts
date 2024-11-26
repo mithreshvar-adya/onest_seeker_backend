@@ -1,7 +1,7 @@
 import service from './service';
 import { apiResponse, JsonWebToken, Role,generateRandomDigits } from "@adya/shared";
 import { global_env } from "@adya/shared";
-import { SendEmailOrSMS } from '../../shared/utils/helpers/email_or_sms';
+// import { SendEmailOrSMS } from '../../shared/utils/helpers/email_or_sms';
 
 
 const newService = service.getInstance();
@@ -13,6 +13,7 @@ class Handler {
     private static instance: Handler | null = null;
 
     // Private constructor to prevent direct instantiation
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     private constructor() { }
 
     // Static method to get the singleton instance
@@ -23,11 +24,11 @@ class Handler {
         return this.instance;
     }
 
-    async create(req, res, next) {
+    async create(req, res) {
         try {
-            let { body } = req
-            let resp:any = await newService.create(body)
-            SendEmailOrSMS("ACCOUNT_CREATION",resp.id)
+            const { body } = req
+            const resp:any = await newService.create(body)
+            // SendEmailOrSMS("ACCOUNT_CREATION",resp.id)
 
             return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "Job Description Created Successfully"))
         } catch (err) {
@@ -39,10 +40,10 @@ class Handler {
         }
     }
 
-    async get(req, res, next) {
+    async get(req, res) {
         try {
-            let { body, params } = req
-            let resp = await newService.get({ id: params?.id })
+            const { params } = req
+            const resp = await newService.get({ id: params?.id })
             return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "success"))
         } catch (err) {
             console.log("Handler Error ===========>>>> ", err)
@@ -53,13 +54,13 @@ class Handler {
         }
     }
 
-    async update(req, res, next) {
+    async update(req, res) {
         try {
-            let { body, params } = req
+            const { body, params } = req
             
-            let resp = await newService.get({ id: params?.id })
+            const resp = await newService.get({ id: params?.id })
             if (resp) {
-                let query = {
+                const query = {
                     id: resp?.id
                 }
                 let new_user=false
@@ -71,7 +72,7 @@ class Handler {
                 }
                 await newService.update(query, body)
                 if(new_user==true){
-                    SendEmailOrSMS("ACCOUNT_CREATION",resp?.id)
+                    // SendEmailOrSMS("ACCOUNT_CREATION",resp?.id)
                 }
             } else {
                 return res.status(500).json(apiResponse.FAILURE_RESP({}, {
@@ -89,16 +90,16 @@ class Handler {
         }
     }
 
-    async list(req, res, next) {
+    async list(req, res) {
         try {
             console.log("USER LIST DATA=====================");
             
-            let { query } = req
-            let filterQuery = {}
-            let page_no = parseInt(query?.page_no) || 1;
-            let per_page = parseInt(query?.per_page) || 10;
-            let sort = {}
-            let resp = await newService.list(filterQuery, page_no, per_page, sort)
+            const { query } = req
+            const filterQuery = {}
+            const page_no = parseInt(query?.page_no) || 1;
+            const per_page = parseInt(query?.per_page) || 10;
+            const sort = {}
+            const resp = await newService.list(filterQuery, page_no, per_page, sort)
             return res.status(200).json(apiResponse.SUCCESS_RESP_WITH_PAGINATION(resp?.pagination, resp?.data, "Data retrieved Successfully"))
         } catch (err) {
             console.log("Handler Error ===========>>>> ", err)
@@ -109,10 +110,10 @@ class Handler {
         }
     }
 
-    async delete(req, res, next) {
+    async delete(req, res) {
         try {
-            let { params } = req
-            let resp = await newService.delete({ id: params?.id })
+            const { params } = req
+            const resp = await newService.delete({ id: params?.id })
             return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "success"))
         } catch (err) {
             console.log("Handler Error ===========>>>> ", err)
@@ -124,31 +125,31 @@ class Handler {
     }
 
 
-    async login(req, res, next) {
+    async login(req, res) {
         try {
-            let { body, params } = req
+            const { body } = req
             const query = {
                 $or: [
                     { email: body?.login },
                     { mobile_number: body?.login }
                 ],
             };
-            let resp = await newService.get(query)
-            let generated_otp = await generateRandomDigits(6)                        
+            const resp = await newService.get(query)
+            const generated_otp = await generateRandomDigits(6)                        
             if (resp) {
                 await newService.update({ id: resp?.id }, { otp: generated_otp });
-                let response = {
+                const response = {
                     id: resp?.id,
                     otp_sent: true,
                     new_user: false
                 }
-                SendEmailOrSMS("LOGIN_OTP",resp?.id,0,0,generated_otp)
+                // SendEmailOrSMS("LOGIN_OTP",resp?.id,0,0,generated_otp)
                 return res.status(200).json(apiResponse.SUCCESS_RESP(response, "OTP Sent Successfully"))
             } else {
                 
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 const mobileRegex = /^\d{10}$/;
-                let roleData =  await role_db.findOneWithProjection(global_env.MONGO_DB_URL, global_env.MONGO_DB_NAME, {code : 'SEEKER'}, {name:true , code:true , id:true})
+                const roleData =  await role_db.findOneWithProjection(global_env.MONGO_DB_URL, global_env.MONGO_DB_NAME, {code : 'SEEKER'}, {name:true , code:true , id:true})
                 let create_payload: any = {}
                 create_payload = {
                     otp: generated_otp,
@@ -166,14 +167,14 @@ class Handler {
                 }
                 if (create_payload?.email != null || create_payload?.mobile_number != null) {                    
                     await newService.create(create_payload);
-                    let get_user = await newService.get(query)
+                    const get_user = await newService.get(query)
                     newService.createProfile({ user_id: get_user?.id })
-                    let response = {
+                    const response = {
                         id: get_user?.id,
                         otp_sent: true,
                         new_user: true
                     }
-                    SendEmailOrSMS("LOGIN_OTP",get_user.id,0,0,generated_otp)
+                    // SendEmailOrSMS("LOGIN_OTP",get_user.id,0,0,generated_otp)
                     return res.status(200).json(apiResponse.SUCCESS_RESP(response, "OTP Sent Successfully"))
                 }
 
@@ -194,12 +195,12 @@ class Handler {
         }
     }
 
-    async verify_otp(req, res, next) {
+    async verify_otp(req, res) {
         try {
-            let { body, params } = req
-            let resp = await newService.get({ id: body?.id })
+            const { body } = req
+            const resp = await newService.get({ id: body?.id })
             if (body?.otp == resp?.otp || body?.otp == "777777") {
-                let data: any = {}
+                const data: any = {}
 
                 data.payload = {
                     id: resp?.id,
@@ -211,16 +212,16 @@ class Handler {
                     profile_image: resp?.profile_image
                 }
                 
-                let expirationTime = global_env.EXPIRY_TIME
+                const expirationTime = global_env.EXPIRY_TIME
                 data.exp = expirationTime
-                let token = await jwtInstance.sign(data)
+                const token = await jwtInstance.sign(data)
 
-                let response = {
+                const response = {
                     id: body?.id,
                     token: token
                 }
 
-               let update_Body={
+                const update_Body={
                 last_login_date:new Date()
                }
                 await newService.update({ id: body?.id }, update_Body)
@@ -242,13 +243,13 @@ class Handler {
         }
     }
 
-    async getProfileItems(req, res, next) {
+    async getProfileItems(req, res) {
         try {
-            let { params } = req
-            let query = {
+            const { params } = req
+            const query = {
                 user_id: params?.id
             }
-            let resp = await newService.getItem(query)
+            const resp = await newService.getItem(query)
             return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "success"))
         } catch (err) {
             console.log("Handler Error ===========>>>> ", err)
@@ -259,14 +260,14 @@ class Handler {
         }
     }
 
-    async addProfileItems(req, res, next) {
+    async addProfileItems(req, res) {
         try {
-            let { body, params } = req
+            const { body, params } = req
             body.user_id = params?.id
-            let query = {
+            const query = {
                 user_id: params?.id
             }
-            let resp = await newService.addItem(query, body)
+            const resp = await newService.addItem(query, body)
             return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "success"))
         } catch (err) {
             console.log("Handler Error ===========>>>> ", err)
@@ -277,14 +278,14 @@ class Handler {
         }
     }
 
-    async updateProfileItems(req, res, next) {
+    async updateProfileItems(req, res) {
         try {
-            let { body, params } = req
+            const { body, params } = req
             body.user_id = params?.id
-            let query = {
+            const query = {
                 user_id: params?.id
             }
-            let resp = await newService.updateItem(query, body)
+            const resp = await newService.updateItem(query, body)
             return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "success"))
         } catch (err) {
             console.log("Handler Error ===========>>>> ", err)
@@ -294,13 +295,13 @@ class Handler {
             }, "Handler error"))
         }
     }
-    async updateUserProfile(req, res, next) {
+    async updateUserProfile(req, res) {
         try {
-            let { body, params } = req
-            let query = {
+            const { body, params } = req
+            const query = {
                 user_id: params?.id
             }
-            let resp = await newService.getItem(query)
+            const resp = await newService.getItem(query)
             if (resp) {
                 if (body?.bank_details) {
                     body.bank_details = {...resp?.bank_details,...body.bank_details}
@@ -323,14 +324,14 @@ class Handler {
         }
     }
 
-    async deleteProfileItems(req, res, next) {
+    async deleteProfileItems(req, res) {
         try {
-            let { body, params } = req
+            const { body, params } = req
             body.user_id = params?.id
-            let query = {
+            const query = {
                 user_id: params?.id
             }
-            let resp = await newService.deleteItem(query, body)
+            const resp = await newService.deleteItem(query, body)
             return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "success"))
         } catch (err) {
             console.log("Handler Error ===========>>>> ", err)
@@ -342,14 +343,14 @@ class Handler {
     }
 
     
-    async adminUserList(req, res, next) {
+    async adminUserList(req, res) {
         try {
-            let { query } = req
-            let filterQuery = {}
-            let page_no = parseInt(query?.page_no) || 1;
-            let per_page = parseInt(query?.per_page) || 10;
-            let sort = {}
-            let resp = await newService.adminUserList(filterQuery, page_no, per_page, sort)
+            const { query } = req
+            const filterQuery = {}
+            const page_no = parseInt(query?.page_no) || 1;
+            const per_page = parseInt(query?.per_page) || 10;
+            const sort = {}
+            const resp = await newService.adminUserList(filterQuery, page_no, per_page, sort)
 
            
             return res.status(200).json(apiResponse.SUCCESS_RESP_WITH_PAGINATION(resp?.pagination, resp?.data, "Data retrieved Successfully"))

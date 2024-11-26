@@ -1,5 +1,5 @@
 import service from './service';
-import { apiResponse,JsonWebToken } from "@adya/shared";
+import { apiResponse, JsonWebToken } from "@adya/shared";
 
 const newService = service.getInstance();
 const jwtInstance = new JsonWebToken();
@@ -9,6 +9,7 @@ class Handler {
     private static instance: Handler | null = null;
 
     // Private constructor to prevent direct instantiation
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     private constructor() { }
 
     // Static method to get the singleton instance
@@ -19,26 +20,28 @@ class Handler {
         return this.instance;
     }
 
-    async create(req, res, next) {
+    private handleError(res, err, context) {
+        console.log(`Handler Error in ${context} ===========>>>> `, err);
+        return res.status(500).json(apiResponse.FAILURE_RESP({}, {
+            name: `Handler Error in ${context}`,
+            message: `${err}`
+        }, `Handler error in ${context}`));
+    }
+
+    async create(req, res) {
         try {
-            let { body,headers } = req
-            let decoded = await jwtInstance.verify(headers.authorization.split(" ")[1]);
-            let resp = await newService.create(body)
-            return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "ModuleMaster Created Successfully"))
+            const { body } = req;
+            const resp = await newService.create(body);
+            return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "ModuleMaster Created Successfully"));
         } catch (err) {
-            console.log("Handler Error in create ===========>>>> ", err)
-            return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-                name: "Handler Error in create",
-                message: `${err}`
-            }, "Handler error in create"))
+            return this.handleError(res, err, "create");
         }
     }
 
-    async get(req, res, next) {
+    async get(req, res) {
+        const { params } = req;
         try {
-            let { body, params ,headers} = req
-            let decoded = await jwtInstance.verify(headers.authorization.split(" ")[1]);
-            let getModuleMaster = await newService.get({ id: params?.id })
+            const getModuleMaster = await newService.get({ id: params?.id })
             if (getModuleMaster) {
                 return res.status(200).json(apiResponse.SUCCESS_RESP(getModuleMaster, "ModuleMaster Retrieved Successfully"))
             } else {
@@ -48,53 +51,44 @@ class Handler {
                 }, "Record Not Found"))
             }
         } catch (err) {
-            console.log("Handler Error in get ===========>>>> ", err)
-            return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-                name: "Handler Error in get",
-                message: `${err}`
-            }, "Handler error in get"))
+            return this.handleError(res, err, "get");
         }
     }
 
-    async list(req, res, next) {
-      try {
-          let { query,headers } = req
-          let decoded = await jwtInstance.verify(headers.authorization.split(" ")[1]);
+    async list(req, res) {
+        const { query, headers } = req;
+        try {
+            const decoded = await jwtInstance.verify(headers.authorization.split(" ")[1]);
 
-          console.log(decoded);
-          
-          let filterQuery: any = {
-            created_by_id: decoded?.id
-          }
-          
-          let page_no = parseInt(query?.page_no) || 1;
-          let per_page = parseInt(query?.per_page) || 10;
-          let sort = [
-              { "createdAt": 'desc' },
-              { "updatedAt": 'desc' },
-          ]
-          
-          let resp = await newService.list(filterQuery, page_no, per_page, sort)
-          return res.status(200).json(apiResponse.SUCCESS_RESP_WITH_PAGINATION(resp?.pagination, resp?.data, "ModuleMasters Retrieved Successfully"))
-      } catch (err) {
-          console.log("Handler Error in list ===========>>>> ", err)
-          return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-              name: "Handler Error in list",
-              message: `${err}`
-          }, "Handler error in list"))
-      }
+            console.log(decoded);
+
+            const filterQuery = {
+                created_by_id: decoded?.id
+            }
+
+            const page_no = parseInt(query?.page_no) || 1;
+            const per_page = parseInt(query?.per_page) || 10;
+            const sort = [
+                { "createdAt": 'desc' },
+                { "updatedAt": 'desc' },
+            ]
+
+            const resp = await newService.list(filterQuery, page_no, per_page, sort)
+            return res.status(200).json(apiResponse.SUCCESS_RESP_WITH_PAGINATION(resp?.pagination, resp?.data, "ModuleMasters Retrieved Successfully"))
+        } catch (err) {
+            return this.handleError(res, err, "list");
+        }
     }
 
-    async update(req, res, next) {
+    async update(req, res) {
+        const { body, params } = req;
         try {
-            let { body, params,headers } = req
-            let decoded = await jwtInstance.verify(headers.authorization.split(" ")[1]);
-            let getModuleMaster = await newService.get({ id: params?.id })
+            const getModuleMaster = await newService.get({ id: params?.id });
             if (getModuleMaster) {
-                let query = {
+                const query = {
                     id: getModuleMaster?.id
                 }
-                let response = await newService.update(query, body)
+                const response = await newService.update(query, body)
                 return res.status(200).json(apiResponse.SUCCESS_RESP(response, "ModuleMaster Updated Successfully"))
             } else {
                 return res.status(500).json(apiResponse.FAILURE_RESP({}, {
@@ -103,24 +97,19 @@ class Handler {
                 }, "Record Not Found"))
             }
         } catch (err) {
-            console.log("Handler Error in update ===========>>>> ", err)
-            return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-                name: "Handler Error in update",
-                message: `${err}`
-            }, "Handler error in update"))
+            return this.handleError(res, err, "update");
         }
     }
 
-    async delete(req, res, next) {
+    async delete(req, res) {
+        const { params } = req;
         try {
-            let { params,headers } = req
-            let decoded = await jwtInstance.verify(headers.authorization.split(" ")[1]);
-            let getModuleMaster = await newService.get({ id: params?.id })
+            const getModuleMaster = await newService.get({ id: params?.id });
             if (getModuleMaster) {
-                let query = {
+                const query = {
                     id: getModuleMaster?.id
                 }
-                let Delete = await newService.delete(query)
+                const Delete = await newService.delete(query)
                 return res.status(200).json(apiResponse.SUCCESS_RESP(Delete, "ModuleMaster Deleted Successfully"))
             } else {
                 return res.status(500).json(apiResponse.FAILURE_RESP({}, {
@@ -129,14 +118,10 @@ class Handler {
                 }, "Record Not Found"))
             }
         } catch (err) {
-            console.log("Handler Error in delete ===========>>>> ", err)
-            return res.status(500).json(apiResponse.FAILURE_RESP({}, {
-                name: "Handler Error in delete",
-                message: `${err}`
-            }, "Handler error in delete"))
+            return this.handleError(res, err, "delete");
         }
     }
 
 }
 
-export default Handler
+export default Handler;

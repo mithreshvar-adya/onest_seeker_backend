@@ -1,6 +1,6 @@
 import { GetClientFeedback, CreateUpdateDeleteSelectedFields } from './dto'
 import { clientFeedback } from '@adya/shared';
-import { global_env } from '@adya/shared';
+import { GlobalEnv } from '../../config/env';
 
 
 
@@ -25,7 +25,7 @@ class Service {
     async get(query) {
         try {
             const select_fields = GetClientFeedback
-            const resp = await client_feedback.findOneWithProjection(global_env.MONGO_DB_URL, global_env.MONGO_DB_NAME, query, select_fields)
+            const resp = await client_feedback.findOneWithProjection(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, query, select_fields)
             return resp
         }
         catch (err) {
@@ -37,7 +37,7 @@ class Service {
     async update(query, payload) {
         try {
             const select_fields = CreateUpdateDeleteSelectedFields
-            await client_feedback.update(global_env.MONGO_DB_URL, global_env.MONGO_DB_NAME, query, select_fields, payload)
+            await client_feedback.update(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, query, select_fields, payload)
             return {}
         }
         catch (err) {
@@ -48,7 +48,7 @@ class Service {
 
     async create(payload) {
         try {
-            await client_feedback.create(global_env.MONGO_DB_URL, global_env.MONGO_DB_NAME, payload)
+            await client_feedback.create(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, payload)
             return {}
         }
         catch (err) {
@@ -60,7 +60,7 @@ class Service {
     async list(query, page_no, per_page, sort) {
         try {
             const select_fields = GetClientFeedback
-            const response = await client_feedback.paginate(global_env.MONGO_DB_URL, global_env.MONGO_DB_NAME, page_no, per_page, query, select_fields, sort)
+            const response = await client_feedback.paginate(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, page_no, per_page, query, select_fields, sort)
             return response
         }
         catch (err) {

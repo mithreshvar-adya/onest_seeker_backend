@@ -1,12 +1,10 @@
 import express from 'express';
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import * as config from "config"
 import logger from "morgan";
 import controller from './controllers/router'
-import { BuyerAppConfig, global_env } from '@adya/shared'
-import { getAppConfig } from "@adya/shared";
 import { live_logs, logsAuth } from "@adya/shared";
+import { GlobalEnv } from './config/env'
 
 
 export default async function init(app: any) {
@@ -24,9 +22,7 @@ export default async function init(app: any) {
   }
 
   try {
-    const appConfig: BuyerAppConfig = config.get("seeker.backend_application");
-    await getAppConfig(appConfig.MONGO_DB_URL, appConfig.MONGO_DB_NAME, "BACKEND_APPLICATION", appConfig);
-    console.log("Backend_Application: ", global_env);
+    console.log("Backend_Application: ", GlobalEnv);
 
 
     app.use(cors());
@@ -56,8 +52,8 @@ export default async function init(app: any) {
       });
     });
 
-    app.listen(global_env?.PORT || 3000, () => {
-      console.log(`Backend_Application server listening on port : ${global_env?.PORT}`);
+    app.listen(GlobalEnv?.PORT || 3000, () => {
+      console.log(`Backend_Application server listening on port : ${GlobalEnv?.PORT}`);
     });
   } catch (err) {
     console.log("App Error =====>>>>", err)

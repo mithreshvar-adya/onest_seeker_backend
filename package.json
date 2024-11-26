@@ -29,7 +29,8 @@
     "ondc-crypto-sdk-nodejs": "^2.1.1",
     "socket.io": "^4.7.5",
     "tslib": "^2.3.0",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@nx/esbuild": "19.3.0",
