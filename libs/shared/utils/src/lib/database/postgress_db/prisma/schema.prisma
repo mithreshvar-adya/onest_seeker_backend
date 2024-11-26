@@ -1,0 +1,18 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      =  "postgresql://adya_buyer:adya_buyer@34.93.13.220:5432/common_db"
+}
+
+
+model test {
+  id         Int     @id @default(autoincrement())
+  domain     String?
+  bpp_id     String?
+  error_logs Json?
+}

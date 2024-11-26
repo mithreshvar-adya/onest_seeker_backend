@@ -1,0 +1,74 @@
+{
+  "name": "backend_application",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/backend_application/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/backend_application",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "apps/backend_application/src/main.ts",
+        "tsConfig": "apps/backend_application/tsconfig.app.json",
+        "assets": ["apps/backend_application/src/assets","config/*.json"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "backend_application:build:development"
+        },
+        "staging": {
+          "buildTarget": "backend_application:build:staging"
+        },
+        "preprod": {
+          "buildTarget": "backend_application:build:preprod"
+        },
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "backend_application:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "backend_application:build:development"
+        },
+        "staging": {
+          "buildTarget": "backend_application:build:staging"
+        },
+        "preprod": {
+          "buildTarget": "backend_application:build:preprod"
+        },
+        "production": {
+          "buildTarget": "backend_application:build:production"
+        }
+      }
+    },
+    "docker-build": {
+      "dependsOn": ["build"],
+      "command": "docker build -f apps/backend_application/Dockerfile . -t backend_application"
+    }
+  }
+}
