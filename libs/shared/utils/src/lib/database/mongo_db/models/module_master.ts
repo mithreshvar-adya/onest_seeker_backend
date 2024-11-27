@@ -26,9 +26,9 @@ export class ModuleMastetr extends BaseModel{
   id: string;
   name: string;
   description: string;
-  is_view: boolean;
-  is_edit: boolean;
-  is_delete: boolean;
+  is_view = false;
+  is_edit = false;
+  is_delete = false;
   // is_active: boolean;
   createdAt: Date;
   updatedAt: Date;

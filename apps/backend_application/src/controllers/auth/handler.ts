@@ -1,6 +1,6 @@
 import service from './service';
-import { apiResponse, JsonWebToken, Role,generateRandomDigits } from "@adya/shared";
-import { global_env } from "@adya/shared";
+import { apiResponse, JsonWebToken, Role, generateRandomDigits } from "@adya/shared";
+import { GlobalEnv } from '../../config/env';
 // import { SendEmailOrSMS } from '../../shared/utils/helpers/email_or_sms';
 
 
@@ -27,7 +27,7 @@ class Handler {
     async create(req, res) {
         try {
             const { body } = req
-            const resp:any = await newService.create(body)
+            const resp: any = await newService.create(body)
             // SendEmailOrSMS("ACCOUNT_CREATION",resp.id)
 
             return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "Job Description Created Successfully"))
@@ -57,21 +57,21 @@ class Handler {
     async update(req, res) {
         try {
             const { body, params } = req
-            
+
             const resp = await newService.get({ id: params?.id })
             if (resp) {
                 const query = {
                     id: resp?.id
                 }
-                let new_user=false
-                console.log("new user---------",resp?.is_new_user);
-                
-                 if(resp?.is_new_user==false){
-                    body.is_new_user=true
-                    new_user=true
+                let new_user = false
+                console.log("new user---------", resp?.is_new_user);
+
+                if (resp?.is_new_user == false) {
+                    body.is_new_user = true
+                    new_user = true
                 }
                 await newService.update(query, body)
-                if(new_user==true){
+                if (new_user == true) {
                     // SendEmailOrSMS("ACCOUNT_CREATION",resp?.id)
                 }
             } else {
@@ -93,7 +93,7 @@ class Handler {
     async list(req, res) {
         try {
             console.log("USER LIST DATA=====================");
-            
+
             const { query } = req
             const filterQuery = {}
             const page_no = parseInt(query?.page_no) || 1;
@@ -135,7 +135,7 @@ class Handler {
                 ],
             };
             const resp = await newService.get(query)
-            const generated_otp = await generateRandomDigits(6)                        
+            const generated_otp = await generateRandomDigits(6)
             if (resp) {
                 await newService.update({ id: resp?.id }, { otp: generated_otp });
                 const response = {
@@ -146,16 +146,16 @@ class Handler {
                 // SendEmailOrSMS("LOGIN_OTP",resp?.id,0,0,generated_otp)
                 return res.status(200).json(apiResponse.SUCCESS_RESP(response, "OTP Sent Successfully"))
             } else {
-                
+
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 const mobileRegex = /^\d{10}$/;
-                const roleData =  await role_db.findOneWithProjection(global_env.MONGO_DB_URL, global_env.MONGO_DB_NAME, {code : 'SEEKER'}, {name:true , code:true , id:true})
+                const roleData = await role_db.findOneWithProjection(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, { code: 'SEEKER' }, { name: true, code: true, id: true })
                 let create_payload: any = {}
                 create_payload = {
                     otp: generated_otp,
                     company_id: "1",
-                    role:{
-                        id : roleData?.id,
+                    role: {
+                        id: roleData?.id,
                         name: roleData?.name,
                         code: roleData?.code
                     }
@@ -165,7 +165,7 @@ class Handler {
                 } else if (mobileRegex.test(body?.login)) {
                     create_payload.mobile_number = body?.login;
                 }
-                if (create_payload?.email != null || create_payload?.mobile_number != null) {                    
+                if (create_payload?.email != null || create_payload?.mobile_number != null) {
                     await newService.create(create_payload);
                     const get_user = await newService.get(query)
                     newService.createProfile({ user_id: get_user?.id })
@@ -208,11 +208,11 @@ class Handler {
                     first_name: resp?.first_name,
                     last_name: resp?.last_name,
                     role: resp?.role,
-                    assigned_role: resp?.role|| {},
+                    assigned_role: resp?.role || {},
                     profile_image: resp?.profile_image
                 }
-                
-                const expirationTime = global_env.EXPIRY_TIME
+
+                const expirationTime = GlobalEnv.EXPIRY_TIME
                 data.exp = expirationTime
                 const token = await jwtInstance.sign(data)
 
@@ -221,9 +221,9 @@ class Handler {
                     token: token
                 }
 
-                const update_Body={
-                last_login_date:new Date()
-               }
+                const update_Body = {
+                    last_login_date: new Date()
+                }
                 await newService.update({ id: body?.id }, update_Body)
 
                 return res.status(200).json(apiResponse.SUCCESS_RESP(response, "Login Successfully"))
@@ -304,7 +304,7 @@ class Handler {
             const resp = await newService.getItem(query)
             if (resp) {
                 if (body?.bank_details) {
-                    body.bank_details = {...resp?.bank_details,...body.bank_details}
+                    body.bank_details = { ...resp?.bank_details, ...body.bank_details }
                 }
                 await newService.updateUserProfile(query, body)
             } else {
@@ -342,7 +342,7 @@ class Handler {
         }
     }
 
-    
+
     async adminUserList(req, res) {
         try {
             const { query } = req
@@ -352,7 +352,7 @@ class Handler {
             const sort = {}
             const resp = await newService.adminUserList(filterQuery, page_no, per_page, sort)
 
-           
+
             return res.status(200).json(apiResponse.SUCCESS_RESP_WITH_PAGINATION(resp?.pagination, resp?.data, "Data retrieved Successfully"))
         } catch (err) {
             console.log("Handler Error ===========>>>> ", err)
