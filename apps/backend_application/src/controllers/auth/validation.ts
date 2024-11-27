@@ -31,7 +31,7 @@ const baseUserSchema = z.object({
   profession: z.string().optional(),
   gender: z.object({
     label: z.string(),
-    value: z.enum(["Male", "Female", "Other"])
+    value: z.string()
   }).optional(),
   nationality: z.string().optional(),
   address: addressSchema.optional(),
