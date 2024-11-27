@@ -1,35 +1,40 @@
 import express from 'express';
-import handler from './handler'
-import { authentication } from "@adya/shared";
+import handler from './handler';
+import { authentication } from '@adya/shared';
+import {
+  validate,
+  listCacheCoursesSchema,
+  listMyCoursesSchema,
+  saveCourseSchema,
+  getCourseDetailSchema,
+  enrollCourseSchema,
+  paymentSchema,
+  adminListCoursesSchema,
+} from './validation';
 
 const router = express.Router();
-const newHandler = handler.getInstance()
+const newHandler = handler.getInstance();
 
-router.post('/create',newHandler.create);
-// router.get('/',authentication,newHandler.list)
-router.post('/:id/update',authentication,newHandler.update);
+// Course management routes
+router.post('/create', authentication, newHandler.create);
+router.get('/get_my_course/:id', authentication, validate(getCourseDetailSchema), newHandler.get);
+router.get('/order/list', authentication, validate(listMyCoursesSchema), newHandler.listMyCourses);
+router.get('/get/:id', authentication, validate(getCourseDetailSchema), newHandler.getCacheCourse);
+router.get('/list', validate(listCacheCoursesSchema), newHandler.listCacheCourses);
+router.get('/landing_page/list', authentication, validate(listCacheCoursesSchema), newHandler.landingPageCacheCourses);
+router.get('/home_page/list', authentication, newHandler.homePagelist);
+router.get('/cache_course/list', authentication, validate(listCacheCoursesSchema), newHandler.listCacheCourses);
+router.get('/landing_page/scholarship', authentication, newHandler.listScholarship);
+router.post('/enroll', authentication, validate(enrollCourseSchema), newHandler.enrolled);
+router.post('/save_course', authentication, validate(saveCourseSchema), newHandler.saveCourse);
+router.get('/get_course/:id', authentication, validate(getCourseDetailSchema), newHandler.CourseDetail);
+router.get('/get_filters', authentication, newHandler.filterDetail);
+router.post('/payment', authentication, validate(paymentSchema), newHandler.payment);
+router.get('/get_recommended_courses', authentication, newHandler.recommendedCourses);
 
-/////////// order db //////////
-router.get('/get_my_course/:id',authentication,newHandler.get);
-router.get('/order/list',authentication,newHandler.listMyCourses)
+// Admin routes
+router.get('/admin/list', authentication, validate(adminListCoursesSchema), newHandler.listAllCourses);
+router.get('/admin/getAllCertificate', authentication, newHandler.getAllCertificate);
+router.get('/events', newHandler.getOnAction);
 
-/////////// cache db//////////
-router.get('/get/:id',authentication,newHandler.getCacheCourse);
-router.get('/list',newHandler.listCacheCourses)
-router.get('/landing_page/list',authentication,newHandler.landingPageCacheCourses)
-router.get('/home_page/list',authentication,newHandler.homePagelist)
-router.get('/cache_course/list',authentication,newHandler.listCacheCourses)
-router.get('/landing_page/scholarship',authentication,newHandler.listScholarship)
-router.post('/enroll',authentication,newHandler.enrolled);
-router.post('/save_course',authentication,newHandler.saveCourse)
-router.get('/get_course/:id',authentication,newHandler.CourseDetail);
-router.get('/get_filters',authentication,newHandler.filterDetail);
-router.post('/payment',authentication,newHandler.payment);
-router.get('/get_recommended_courses',authentication, newHandler.recommendedCourses)
-
-router.get('/admin/list', authentication, newHandler.listAllCourses) //authentication
-router.get('/admin/getAllCertificate', authentication, newHandler.getAllCertificate)
-
-router.get('/events', newHandler.getOnAction)
-
-export default router
+export default router;
