@@ -7,13 +7,16 @@ const VALIDATION_PATTERNS = {
   PASSWORD: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
 } as const;
 
-const addressSchema = z.object({
-  street: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  country: z.string().optional(),
-  pincode: z.string().optional()
-});
+const addressSchema = z.union([
+  z.string(),
+  z.object({
+    street: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    country: z.string().optional(),
+    pincode: z.string().optional()
+  })
+]);
 
 const baseUserSchema = z.object({
   first_name: z.string().min(1, "First name is required").optional(),
@@ -26,7 +29,10 @@ const baseUserSchema = z.object({
   language_preference: z.string().optional(),
   age: z.number().min(0).max(150).optional(),
   profession: z.string().optional(),
-  gender: z.enum(["male", "female", "other"]).optional(),
+  gender: z.object({
+    label: z.string(),
+    value: z.enum(["Male", "Female", "Other"])
+  }).optional(),
   nationality: z.string().optional(),
   address: addressSchema.optional(),
   is_active: z.boolean().optional(),

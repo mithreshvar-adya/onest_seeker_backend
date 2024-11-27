@@ -14,7 +14,7 @@ import {
 const router = express.Router();
 const newHandler = handler.getInstance()
 
-router.post('/create',authentication, validate(createRoleSchema), newHandler.create); 
+router.post('/create', validate(createRoleSchema), newHandler.create); 
 router.get('/get/:id',authentication, validate(getByIdSchema), newHandler.get); 
 router.get('/',validate(listQuerySchema), newHandler.list) 
 // router.get('/list',authentication,newHandler.rolelist)

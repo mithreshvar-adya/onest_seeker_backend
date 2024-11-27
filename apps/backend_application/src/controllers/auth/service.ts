@@ -12,14 +12,17 @@ const jobs_model = Jobs.getInstance();
 
 class Service {
     private static instance: Service | null = null;
+    private user_model = User.getInstance();
+    private userProfile = UserProfile.getInstance();
+    private course_model = CourseOrder.getInstance();
+    private jobs_model = Jobs.getInstance();
 
     // Private constructor to prevent direct instantiation
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     private constructor() { }
 
-    // Static method to get the singleton instance
     public static getInstance(): Service {
-        if (this.instance === null) {
+        if (!this.instance) {
             this.instance = new Service();
         }
         return this.instance;
@@ -37,10 +40,9 @@ class Service {
             console.log("Service Error =====", err)
             throw err
         }
-
     }
 
-    async update(query, payload) {
+    async update(query: any, payload: any) {
         try {
 
             await user_model.updateUser(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, query, payload)
@@ -50,9 +52,9 @@ class Service {
             console.log("Service Error =====", err)
             throw err
         }
-
     }
-    async create(payload) {
+
+    async create(payload: any) {
         try {
             const resp = await user_model.createUser(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, payload)
             return resp
@@ -64,7 +66,7 @@ class Service {
 
     }
 
-    async createProfile(payload) {
+    async createProfile(payload: any) {
         try {
             await userProfile.createProfile(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, payload)
             return {}
@@ -76,7 +78,7 @@ class Service {
 
     }
 
-    async list(query, page_no, per_page, sort) {
+    async list(query: any, page_no: number, per_page: number, sort: any) {
         try {
             const select_fields = GetUser
             const response = await user_model.paginate(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, page_no, per_page, query, select_fields, sort)
@@ -95,7 +97,7 @@ class Service {
 
     }
 
-    async delete(query) {
+    async delete(query: any) {
         try {
             const select_fields = createUpdateDeleteSelectedFields
             const resp = await user_model.deleteUser(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, query)
@@ -107,7 +109,7 @@ class Service {
         }
     }
 
-    async getItem(query) {
+    async getItem(query: any) {
         try {
 
             const select_fields = unwantedFields
@@ -120,7 +122,7 @@ class Service {
         }
     }
 
-    async addItem(query, payload) {
+    async addItem(query: any, payload: any) {
         try {
 
             await userProfile.addItem(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, query, payload)
@@ -132,7 +134,7 @@ class Service {
         }
     }
 
-    async updateItem(query, payload) {
+    async updateItem(query: any, payload: any) {
         try {
             const sequence = payload?.sequence
             delete payload?.sequence
@@ -145,7 +147,7 @@ class Service {
         }
     }
 
-    async deleteItem(query, payload) {
+    async deleteItem(query: any, payload: any) {
         try {
 
             await userProfile.deleteItem(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, query, payload)
@@ -157,7 +159,7 @@ class Service {
         }
 
     }
-    async updateUserProfile(query, payload) {
+    async updateUserProfile(query: any, payload: any) {
         try {
 
             await userProfile.update(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, query, payload)
@@ -185,7 +187,7 @@ class Service {
 
 
                     return {
-                        ...restOfUserData,
+                        ...user,
                         course_count: total_course_enrolements,
                         job_count: total_job_applications
                     };
