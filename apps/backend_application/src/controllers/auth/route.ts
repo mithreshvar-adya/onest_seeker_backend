@@ -8,7 +8,7 @@ const newHandler = handler.getInstance()
 
 // Auth routes
 router.post('/login', validate(schemas.login), newHandler.login);
-router.post('/verify-otp', validate(schemas.verifyOtp), newHandler.verify_otp);
+router.post('/verify_otp', validate(schemas.verifyOtp), newHandler.verify_otp);
 
 // User management routes
 router.post('/create', validate(schemas.createUser), newHandler.create);

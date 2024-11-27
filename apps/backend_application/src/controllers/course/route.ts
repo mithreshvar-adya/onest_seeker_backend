@@ -23,7 +23,7 @@ router.get('/get/:id', authentication, validate(getCourseDetailSchema), newHandl
 router.get('/list', validate(listCacheCoursesSchema), newHandler.listCacheCourses);
 router.get('/landing_page/list', authentication, validate(listCacheCoursesSchema), newHandler.landingPageCacheCourses);
 router.get('/home_page/list', authentication, newHandler.homePagelist);
-router.get('/cache_course/list', authentication, validate(listCacheCoursesSchema), newHandler.listCacheCourses);
+router.get('/cache_course/list', validate(listCacheCoursesSchema), newHandler.listCacheCourses);
 router.get('/landing_page/scholarship', authentication, newHandler.listScholarship);
 router.post('/enroll', authentication, validate(enrollCourseSchema), newHandler.enrolled);
 router.post('/save_course', authentication, validate(saveCourseSchema), newHandler.saveCourse);
