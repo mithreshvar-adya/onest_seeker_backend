@@ -55,7 +55,7 @@ export class User extends BaseModel {
   email: string = '';
 
   @Expose()
-  mobile_number: string = '';
+  mobile_number: string = '' ;
 
   @Expose()
   profile_image: string = '';

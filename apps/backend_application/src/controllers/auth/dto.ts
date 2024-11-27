@@ -1,4 +1,8 @@
-const GetUser = {
+interface ProjectionFields {
+  [key: string]: boolean;
+}
+
+ const GetUser: ProjectionFields = {
   id: true,
   first_name: true,
   middle_name: true,
@@ -9,8 +13,8 @@ const GetUser = {
   profile_image: true,
   dob: true,
   language_preference: true,
-  age:true,
-  profession:true,
+  age: true,
+  profession: true,
   gender: true,
   nationality: true,
   address: true,
@@ -24,20 +28,20 @@ const GetUser = {
   _id: false
 };
 
-const createUpdateDeleteSelectedFields = {
-  "id": true,
-}
+ const createUpdateDeleteSelectedFields: ProjectionFields = {
+  id: true
+};
 
-const unwantedFields = {
+ const unwantedFields: ProjectionFields = {
   _id: false,
   _collectionName: false,
   created_by_id: false,
   updated_by_id: false,
   createdAt: false,
   updatedAt: false
-}
+};
 
-const AdminUserList = {
+ const AdminUserList: ProjectionFields = {
   id: true,
   first_name: true,
   middle_name: true,
@@ -46,7 +50,7 @@ const AdminUserList = {
   email: true,
   mobile_number: true,
   profile_image: true,
-  last_login_date:true,
+  last_login_date: true,
   createdAt: true,
   is_active: true,
   status: true,
