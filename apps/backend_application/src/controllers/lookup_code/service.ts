@@ -1,5 +1,6 @@
-import { LookupCode, Global_Env, global_env } from '@adya/shared';
+import { LookupCode, Global_Env } from '@adya/shared';
 import { createUpdateDeleteSelectedFields, GetLookupCode } from './dto';
+import { GlobalEnv } from '../../config/env';
 
 const course_model = LookupCode.getInstance();
 const env_model = Global_Env.getInstance();
@@ -20,7 +21,7 @@ class Service {
 
   async createLookupCode(payload) {
     try {
-      await course_model.createlook(global_env.MONGO_DB_URL, global_env.MONGO_DB_NAME, payload);
+      await course_model.createlook(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, payload);
       return {};
     } catch (err) {
       console.log('Service Error =====', err);
@@ -30,7 +31,7 @@ class Service {
   async get(query: any): Promise<any> {
     try {
       const select_fields = GetLookupCode;
-      const resp = await course_model.readUser(global_env.MONGO_DB_URL, global_env.MONGO_DB_NAME, query, select_fields);
+      const resp = await course_model.readUser(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, query, select_fields);
       return resp;
     } catch (err) {
       console.log('Service Error =====', err);
@@ -47,7 +48,7 @@ class Service {
     try {
       const select_fields = GetLookupCode;
       const response = await course_model.paginate(
-        global_env.MONGO_DB_URL, global_env.MONGO_DB_NAME,
+        GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME,
         page_no,
         per_page,
         query,
@@ -63,7 +64,7 @@ class Service {
 
   async update(query: any, payload: any): Promise<any> {
     try {
-      await course_model.updateUser(global_env.MONGO_DB_URL, global_env.MONGO_DB_NAME, query, payload);
+      await course_model.updateUser(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, query, payload);
       return {};
     } catch (err) {
       console.log('Service Error =====', err);
@@ -73,7 +74,7 @@ class Service {
 
   async delete(query: any): Promise<any> {
     try {
-      await course_model.deleteUser(global_env.MONGO_DB_URL, global_env.MONGO_DB_NAME, query);
+      await course_model.deleteUser(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, query);
       return {};
     } catch (err) {
       console.log('Service Error =====', err);
@@ -83,7 +84,7 @@ class Service {
 
   async getEnv(query) {
     try {
-      return await env_model.get(global_env.MONGO_DB_URL, global_env.MONGO_DB_NAME, query);
+      return await env_model.get(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, query);
     } catch (err) {
       console.log('Service Error =====', err);
       throw err;
@@ -92,7 +93,7 @@ class Service {
 
   async createEnv(payload) {
     try {
-      await env_model.create(global_env.MONGO_DB_URL, global_env.MONGO_DB_NAME, payload);
+      await env_model.create(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, payload);
       return {};
     } catch (err) {
       console.log('Service Error =====', err);
@@ -102,7 +103,7 @@ class Service {
 
   async updateEnv(query, payload) {
     try {
-      await env_model.update(global_env.MONGO_DB_URL, global_env.MONGO_DB_NAME, query, payload);
+      await env_model.update(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, query, payload);
       return {};
     } catch (err) {
       console.log('Service Error =====', err);
