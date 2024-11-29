@@ -18,9 +18,9 @@ const newHandler = handler.getInstance();
 router.get('/list', validate(listJobsSchema), newHandler.listJobs);
 
 // Authenticated routes
-router.get('/get_filters', authentication, newHandler.getFilterData);
-router.get('/get/jobs', authentication, validate(listJobsSchema), newHandler.getAllCacheJobs);
-router.get('/get_job/:id', authentication, validate(getJobDetailSchema), newHandler.getACacheJobDetail);
+router.get('/get_filters', newHandler.getFilterData);
+router.get('/get/jobs', validate(listJobsSchema), newHandler.getAllCacheJobs);
+router.get('/get_job/:id', validate(getJobDetailSchema), newHandler.getACacheJobDetail);
 router.post('/save_job', authentication, validate(saveJobSchema), newHandler.saveJob);
 router.post('/apply_job', authentication, validate(applyJobSchema), newHandler.applyJob);
 router.get('/get_my_jobs', authentication, validate(listJobsSchema), newHandler.getMyJoblist);

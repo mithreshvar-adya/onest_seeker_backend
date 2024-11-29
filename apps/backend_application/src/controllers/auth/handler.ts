@@ -24,7 +24,7 @@ class Handler {
         return this.instance;
     }
 
-    async create(req, res) {
+    async create(req, res, next) {
         try {
             const { body } = req
             const resp: any = await newService.create(body)
@@ -40,9 +40,9 @@ class Handler {
         }
     }
 
-    async get(req, res) {
+    async get(req, res, next) {
         try {
-            const { params } = req
+            const { body, params } = req
             const resp = await newService.get({ id: params?.id })
             return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "success"))
         } catch (err) {
@@ -54,7 +54,7 @@ class Handler {
         }
     }
 
-    async update(req, res) {
+    async update(req, res, next) {
         try {
             const { body, params } = req
 
@@ -66,14 +66,14 @@ class Handler {
                 let new_user = false
                 console.log("new user---------", resp?.is_new_user);
 
-                if (resp?.is_new_user == false) {
-                    body.is_new_user = true
+                if (resp?.is_new_user == true) {
+                    body.is_new_user = false
                     new_user = true
                 }
                 await newService.update(query, body)
-                if (new_user == true) {
-                    // SendEmailOrSMS("ACCOUNT_CREATION",resp?.id)
-                }
+                // if(new_user==true){
+                //     SendEmailOrSMS("ACCOUNT_CREATION",resp?.id)
+                // }
             } else {
                 return res.status(500).json(apiResponse.FAILURE_RESP({}, {
                     name: "Record Not Found Error",
@@ -90,10 +90,44 @@ class Handler {
         }
     }
 
-    async list(req, res) {
+    async userOnboarding(req, res, next) {
         try {
-            console.log("USER LIST DATA=====================");
+            const { body, params } = req
 
+            const resp = await newService.get({ id: params?.id })
+            if (resp) {
+                const query = {
+                    id: resp?.id
+                }
+                let new_user = false
+                console.log("new user-----------", resp?.is_new_user);
+
+                if (resp?.is_new_user == true) {
+                    body.is_new_user = false
+                    new_user = true
+                }
+                await newService.update(query, body)
+                // if(new_user==true){
+                //     SendEmailOrSMS("ACCOUNT_CREATION",resp?.id)
+                // }
+            } else {
+                return res.status(500).json(apiResponse.FAILURE_RESP({}, {
+                    name: "Record Not Found Error",
+                    message: `Record Not Found`
+                }, "Record Not Found"))
+            }
+            return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "success"))
+        } catch (err) {
+            console.log("Handler Error ===========>>>> ", err)
+            return res.status(500).json(apiResponse.FAILURE_RESP({}, {
+                name: "Handler Error",
+                message: `${err}`
+            }, "Handler error"))
+        }
+    }
+
+    async list(req, res, next) {
+        try {
             const { query } = req
             const filterQuery = {}
             const page_no = parseInt(query?.page_no) || 1;
@@ -110,7 +144,7 @@ class Handler {
         }
     }
 
-    async delete(req, res) {
+    async delete(req, res, next) {
         try {
             const { params } = req
             const resp = await newService.delete({ id: params?.id })
@@ -125,9 +159,9 @@ class Handler {
     }
 
 
-    async login(req, res) {
+    async login(req, res, next) {
         try {
-            const { body } = req
+            const { body, params } = req
             const query = {
                 $or: [
                     { email: body?.login },
@@ -138,10 +172,20 @@ class Handler {
             const generated_otp = await generateRandomDigits(6)
             if (resp) {
                 await newService.update({ id: resp?.id }, { otp: generated_otp });
-                const response = {
-                    id: resp?.id,
-                    otp_sent: true,
-                    new_user: false
+                let response = {}
+                if (resp?.is_new_user == true) {
+                    response = {
+                        id: resp?.id,
+                        otp_sent: true,
+                        new_user: true
+                    }
+
+                } else {
+                    response = {
+                        id: resp?.id,
+                        otp_sent: true,
+                        new_user: false
+                    }
                 }
                 // SendEmailOrSMS("LOGIN_OTP",resp?.id,0,0,generated_otp)
                 return res.status(200).json(apiResponse.SUCCESS_RESP(response, "OTP Sent Successfully"))
@@ -195,9 +239,9 @@ class Handler {
         }
     }
 
-    async verify_otp(req, res) {
+    async verify_otp(req, res, next) {
         try {
-            const { body } = req
+            const { body, params } = req
             const resp = await newService.get({ id: body?.id })
             if (body?.otp == resp?.otp || body?.otp == "777777") {
                 const data: any = {}
@@ -243,7 +287,7 @@ class Handler {
         }
     }
 
-    async getProfileItems(req, res) {
+    async getProfileItems(req, res, next) {
         try {
             const { params } = req
             const query = {
@@ -260,7 +304,7 @@ class Handler {
         }
     }
 
-    async addProfileItems(req, res) {
+    async addProfileItems(req, res, next) {
         try {
             const { body, params } = req
             body.user_id = params?.id
@@ -278,7 +322,7 @@ class Handler {
         }
     }
 
-    async updateProfileItems(req, res) {
+    async updateProfileItems(req, res, next) {
         try {
             const { body, params } = req
             body.user_id = params?.id
@@ -295,7 +339,7 @@ class Handler {
             }, "Handler error"))
         }
     }
-    async updateUserProfile(req, res) {
+    async updateUserProfile(req, res, next) {
         try {
             const { body, params } = req
             const query = {
@@ -324,7 +368,7 @@ class Handler {
         }
     }
 
-    async deleteProfileItems(req, res) {
+    async deleteProfileItems(req, res, next) {
         try {
             const { body, params } = req
             body.user_id = params?.id
@@ -343,13 +387,64 @@ class Handler {
     }
 
 
-    async adminUserList(req, res) {
+    async adminUserList(req, res, next) {
         try {
             const { query } = req
             const filterQuery = {}
             const page_no = parseInt(query?.page_no) || 1;
             const per_page = parseInt(query?.per_page) || 10;
-            const sort = {}
+            if (query?.search) {
+                const searchTerms = query.search.split(' ').filter(term => term.trim() !== '');
+
+                filterQuery["$or"] = [
+                    {
+                        email: {
+                            $regex: query.search,
+                            $options: 'i' // case insensitive
+                        }
+                    },
+                    {
+                        mobile_number: {
+                            $regex: query.search,
+                            $options: 'i' // case insensitive
+                        }
+                    },
+                    ...searchTerms.map(term => ({
+                        $or: [
+                            {
+                                first_name: {
+                                    $regex: term,
+                                    $options: 'i' // case insensitive
+                                }
+                            },
+                            {
+                                last_name: {
+                                    $regex: term,
+                                    $options: 'i' // case insensitive
+                                }
+                            }
+                        ]
+                    }))
+                ];
+            }
+            const sort: any = {};
+
+            if (query?.createdAt_order) {
+                if (query.createdAt_order === "asc") {
+                    sort.createdAt = 1; // Oldest first
+                } else if (query.createdAt_order === "desc") {
+                    sort.createdAt = -1; // Newest first
+                }
+            }
+
+            if (query?.last_login_date_order) {
+                if (query.last_login_date_order === "asc") {
+                    sort.last_login_date = 1; // Oldest first
+                } else if (query.last_login_date_order === "desc") {
+                    sort.last_login_date = -1; // Newest first
+                }
+            }
+
             const resp = await newService.adminUserList(filterQuery, page_no, per_page, sort)
 
 

@@ -1,30 +1,30 @@
 import express from 'express';
 import handler from './handler'
 import { authentication } from "@adya/shared";
-import { validate, schemas } from './validation';
 
 const router = express.Router();
 const newHandler = handler.getInstance()
 
-// Auth routes
-router.post('/login', validate(schemas.login), newHandler.login);
-router.post('/verify_otp', validate(schemas.verifyOtp), newHandler.verify_otp);
+// router.post('/test',newHandler.test);
+router.post('/create',newHandler.create);
+router.get('/get/:id',authentication,newHandler.get);
+router.get('/',authentication,newHandler.list)
+router.post('/:id/update',authentication,newHandler.update);
+router.delete('/:id/delete',authentication,newHandler.delete);
 
-// User management routes
-router.post('/create', validate(schemas.createUser), newHandler.create);
-router.get('/get/:id', authentication, newHandler.get);
-router.post('/:id/update', authentication, validate(schemas.updateUser), newHandler.update);
-router.get('/', authentication, newHandler.list);
-router.delete('/:id', authentication, newHandler.delete);
 
-// Profile routes
-router.get('/:id/profile', authentication, newHandler.getProfileItems);
-router.post('/:id/profile', authentication, validate(schemas.updateProfile), newHandler.updateUserProfile);
-router.post('/:id/profile/items', authentication, newHandler.addProfileItems);
-router.put('/:id/profile/items', authentication, newHandler.updateProfileItems);
-router.delete('/:id/profile/items', authentication, newHandler.deleteProfileItems);
+//////////////////// user profile ////////////////////
+router.get('/:id/get_profile_item',authentication,newHandler.getProfileItems);
+router.post('/:id/add_profile_item',authentication,newHandler.addProfileItems);
+router.post('/:id/update_profile_item',authentication,newHandler.updateProfileItems);
+router.post('/:id/update_profile',authentication,newHandler.updateUserProfile);
+router.post('/:id/delete_profile_item',authentication,newHandler.deleteProfileItems);
 
-// Admin routes
-router.get('/admin/users', authentication, newHandler.adminUserList);
+router.post('/login',newHandler.login);
+router.post('/verify_otp',newHandler.verify_otp);
+router.post('/:id/user_onboarding',authentication,newHandler.userOnboarding);
+
+router.get('/admin/list',authentication,newHandler.adminUserList)
+
 
 export default router

@@ -27,9 +27,7 @@ class Service {
             const user_id = query.user_id;
             const course_id = query.course_id;
 
-            const user = await user_profile_model.findOne(
-                GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME,
-                { user_id: user_id })
+            const user = await user_profile_model.findOne(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, { user_id: user_id })
 
             user.recent_viewed_course = user.recent_viewed_course || [];
 
@@ -45,11 +43,7 @@ class Service {
                 user.recent_viewed_course.shift();
             }
 
-            await user_profile_model.updateProfile(
-                GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME,
-                { user_id: user_id },
-                { recent_viewed_course: user.recent_viewed_course }
-            );
+            await user_profile_model.updateProfile(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, { user_id: user_id }, { recent_viewed_course: user.recent_viewed_course })
             // console.log("updated: ",user.recent_viewed_course); 
 
             const select_fields = cacheWantedFields

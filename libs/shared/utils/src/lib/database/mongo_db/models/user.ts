@@ -36,7 +36,7 @@ export class User extends BaseModel {
     super('users');
     this.id = uuidv4(); // Assign a UUID by default
     this.is_active = true; // Set default is_active value
-    this.is_new_user = false;
+    this.is_new_user = true;
   }
 
   @Expose()
@@ -55,7 +55,7 @@ export class User extends BaseModel {
   email: string = '';
 
   @Expose()
-  mobile_number: string = '' ;
+  mobile_number: string = '';
 
   @Expose()
   profile_image: string = '';

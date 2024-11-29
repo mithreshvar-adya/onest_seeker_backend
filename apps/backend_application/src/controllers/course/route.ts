@@ -27,8 +27,8 @@ router.get('/cache_course/list', validate(listCacheCoursesSchema), newHandler.li
 router.get('/landing_page/scholarship', authentication, newHandler.listScholarship);
 router.post('/enroll', authentication, validate(enrollCourseSchema), newHandler.enrolled);
 router.post('/save_course', authentication, validate(saveCourseSchema), newHandler.saveCourse);
-router.get('/get_course/:id', authentication, validate(getCourseDetailSchema), newHandler.CourseDetail);
-router.get('/get_filters', authentication, newHandler.filterDetail);
+router.get('/get_course/:id', validate(getCourseDetailSchema), newHandler.CourseDetail);
+router.get('/get_filters', newHandler.filterDetail);
 router.post('/payment', authentication, validate(paymentSchema), newHandler.payment);
 router.get('/get_recommended_courses', authentication, newHandler.recommendedCourses);
 

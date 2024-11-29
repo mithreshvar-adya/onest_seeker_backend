@@ -478,12 +478,17 @@ class Handler {
     async CourseDetail(req, res, next) {
         try {
             const { body, query, params, headers } = req
-            const decoded = await jwtInstance.verify((headers.authorization).split(" ")[1])
-
-            query.user_id = decoded.id
-            query.state = "Created"
-            const recent = await newService.getCourseDetail({ user_id: query.user_id, course_id: params?.id })
-            return res.status(200).json(apiResponse.SUCCESS_RESP(recent, "Data Retrieved Successfully"))
+            
+            if (headers.authorization) {
+                const decoded = await jwtInstance.verify((headers.authorization).split(" ")[1])
+                query.user_id = decoded.id
+                query.state = "Created"
+                const recent = await newService.getCourseDetail({ user_id: query.user_id, course_id: params?.id })
+                return res.status(200).json(apiResponse.SUCCESS_RESP(recent, "Data Retrieved Successfully"))
+            } else {
+                const resp = await newService.getCache({ course_id: params?.id })
+                return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "Data Retrieved Successfully"))
+            }
         } catch (err) {
             console.log("Handler Error ===========>>>> ", err)
             return res.status(500).json(apiResponse.FAILURE_RESP({}, {
