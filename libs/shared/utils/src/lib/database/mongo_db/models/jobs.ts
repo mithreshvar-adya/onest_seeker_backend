@@ -279,69 +279,93 @@ public async getAllJobListing(dbUrl, dbName, page = 1, limit = 10, query, select
   async getAllApplication(dbUrl, dbName, page = 1, limit = 10, query, select_fields, sort) {
     try {
       const { db } = await DatabaseConnection.getInstance(dbUrl, dbName);
+      const skip = (parseInt(page) - 1) * parseInt(limit);
 
-      const skip = (page - 1) * limit;
-
+      // Create the aggregation pipeline
       const pipeline = [
-        { $match: query },
+        { $match: query || {} },
         {
           $lookup: {
-            from: 'users',              
-            localField: 'user_id',      
-            foreignField: 'id',        
-            as: 'user_details'         
+            from: 'users',
+            let: { userId: '$user_id' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$id', '$$userId'] } } },
+              { 
+                $project: {
+                  _id: 0,
+                  first_name: 1,
+                  last_name: 1,
+                  email: 1,
+                  mobile_number: 1,
+                  profile_image: 1,
+                }
+              }
+            ],
+            as: 'user_detail'
           }
         },
-        { $unwind: '$user_details' },       // Flatten the "user_details" array
-        {
-          $lookup: {
-            from: 'job_cache',         
-            localField: 'job_id',    
-            foreignField: 'job_id',     
-            as: 'job_details'          
-          }
-        },
-        { $unwind: '$job_details' },        // Flatten the "job_details" array
+        { $unwind: '$user_detail' },       // Flatten the "user_details" array
+        // {
+        //   $lookup: {
+        //     from: 'job_cache',         
+        //     localField: 'job_id',    
+        //     foreignField: 'job_id',     
+        //     as: 'job_details'          
+        //   }
+        // },
+        // { $unwind: '$job_details' },        // Flatten the "job_details" array
         {
           $project: {
-            _id: 0,                              
-            provider_id: 1,                      
-            first_name: '$user_details.first_name', // Include first_name from the joined collection
-            phone_number: '$user_details.mobile_number',
-            email: '$user_details.email',
-            job_description: '$job_details.job_descriptor',
-            provider_description: '$job_details.provider_descriptor'
+            _id: 0,              
+            provider_descriptor: 1,
+            job_descriptor: 1,
+            job_id: 1,
+            content_metadata: 1,
+            fulfillments: 1,
+            fulfillment_status: 1,
+            locations: 1,
+            // provider_id: 1,                      
+            // job_description: '$job_details.job_descriptor',
+            // provider_description: '$job_details.provider_descriptor',
+            user_detail: 1,
           }
         }
       ];
 
-      if (limit !== -1) {
+      if (sort && Object.keys(sort).length > 0) {
+        pipeline.push({ $sort: sort });
+      }
+
+      // Get total count using the same pipeline without pagination
+      const countPipeline = [...pipeline];
+      countPipeline.push({ $count: 'total' });
+      const countResult = await db.collection(this._collectionName).aggregate(countPipeline).toArray();
+      const totalCount = countResult[0]?.total || 0;
+
+      // Add pagination if limit is not -1
+      if (parseInt(limit) !== -1) {
         pipeline.push(
-          { $skip: skip },    
-          { $limit: limit } 
+          { $skip: skip },
+          { $limit: parseInt(limit) }
         );
       }
 
+      // Execute the main aggregation
       const result = await db.collection(this._collectionName).aggregate(pipeline).toArray();
 
-      const totalCount = result.length;
-
       return {
-          data: result,
-          pagination: limit !== -1 ? {
-              currentPage: page,
-              totalPages: Math.ceil(totalCount / limit),
-              totalItems: totalCount
-          } : {
-              currentPage: 1,
-              totalPages: 1,
-              totalItems: totalCount
-          }
+        data: result,
+        pagination: {
+          per_page: parseInt(limit),
+          page_no: parseInt(page),
+          total_rows: totalCount,
+          total_pages: parseInt(limit) === -1 ? 1 : Math.ceil(totalCount / parseInt(limit))
+        }
       };
 
     } catch (err) {
-        console.error('Error in getAllApplicationsWithUserName:', err);
-        throw err;
+      console.error('Error in getAllApplicationsWithUserName:', err);
+      throw err;
     }
   }
 

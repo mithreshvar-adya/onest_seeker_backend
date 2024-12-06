@@ -395,11 +395,13 @@ class Handler {
       const user_id = decoded.id;
       const { is_applied_job, job_name } = query;
 
-      const filterQuery = {
-        user_id: user_id,
+      const filterQuery: any = {
         state: "Created"
       }
-
+      if (decoded.role.code !== "SEEKER_ADMIN") {
+        filterQuery.user_id = user_id
+      }
+      
       if (is_applied_job == 'true' || is_applied_job) {
         filterQuery["is_applied_job"] = true
       }
@@ -494,7 +496,7 @@ class Handler {
       const sort = {}
 
       const resp = await newService.getAllApplication(filterQuery, page_no, per_page, sort)
-      return res.status(200).json(apiResponse.SUCCESS_RESP(resp, "Data retrieved Successfully"))
+      return res.status(200).json(apiResponse.SUCCESS_RESP_WITH_PAGINATION(resp?.pagination, resp?.data, "Data retrieved Successfully"))
     } catch (err) {
       console.log('Handler Error ===========>>>> ', err);
       return res.status(500).json(

@@ -108,8 +108,9 @@ class Handler {
             const per_page = parseInt(query?.per_page) || 10;
             delete query?.page_no
             delete query?.per_page
-            query.user_id = decoded.id
-            query.state = "Created"
+            if (decoded.role.code !== "SEEKER_ADMIN") {
+                query.user_id = decoded.id
+            }
             if (query?.status) {
                 query["fulfillment_status.code"] = query?.status
                 delete query?.status
@@ -117,6 +118,9 @@ class Handler {
             if (query?.payment_status) {
                 query["payments.status"] = query?.payment_status
                 delete query?.payment_status
+            }
+            if (!query?.state) {
+                query.state = "Created"
             }
             const { sort_by, order } = req.query;
             const sort = {}
@@ -138,7 +142,13 @@ class Handler {
             }
             console.log("Query for listMy Course---->", query, sort);
 
-            const resp = await newService.list(query, page_no, per_page, sort)
+            let resp = null;
+            if (decoded.role.code === "SEEKER_ADMIN") {
+
+                resp = await newService.getAllOrders(query, page_no, per_page, sort)
+            } else {
+                resp = await newService.list(query, page_no, per_page, sort)
+            }
             return res.status(200).json(apiResponse.SUCCESS_RESP_WITH_PAGINATION(resp?.pagination, resp?.data, "Data retrieved Successfully"))
         } catch (err) {
             console.log("Handler Error ===========>>>> ", err)
@@ -478,7 +488,7 @@ class Handler {
     async CourseDetail(req, res, next) {
         try {
             const { body, query, params, headers } = req
-            
+
             if (headers.authorization) {
                 const decoded = await jwtInstance.verify((headers.authorization).split(" ")[1])
                 query.user_id = decoded.id

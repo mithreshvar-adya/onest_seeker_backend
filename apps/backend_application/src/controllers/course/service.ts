@@ -145,6 +145,18 @@ class Service {
         }
     }
 
+    async getAllOrders(query, page_no, per_page, sort) {
+        try {
+            const select_fields = orderWantedFields
+            const response = await course_model.getAllOrders(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, page_no, per_page, query, select_fields, sort)
+            return response
+        }
+        catch (err) {
+            console.log("Service Error =====", err)
+            throw err
+        }
+    }
+
     // async listCacheCourses(query, page_no, per_page, sort) {
     //     try {
     //         const select_fields = cacheWantedFields

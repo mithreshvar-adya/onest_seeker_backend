@@ -24,7 +24,7 @@ const jobFiltersSchema = {
         .optional()
         .transform(val => val ? parseFloat(val) : undefined),
     provider_descriptor: z.string().optional(),
-    is_saved_job: z.boolean().optional()
+    is_saved_job: z.string().optional()
 };
 
 // Job application form schema
@@ -61,7 +61,7 @@ export const getJobDetailSchema = z.object({
 
 // Save Job Schema
 export const saveJobSchema = z.object({
-    body: z.object({
+    query: z.object({
         job_id: z.string().min(1, "Job ID is required"),
         type: z.enum(['save', 'unsave'], {
             errorMap: () => ({ message: "Type must be either 'save' or 'unsave'" })

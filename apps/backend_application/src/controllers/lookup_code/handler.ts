@@ -8,6 +8,7 @@ class Handler {
   private static instance: Handler | null = null;
 
   // Private constructor to prevent direct instantiation
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
 
   // Static method to get the singleton instance
@@ -20,7 +21,7 @@ class Handler {
 
   async createBulkLookupCode(req, res, next){
     try {
-      let payload = req?.body;
+      const payload = req?.body;
       if (!payload || !payload.lookup_codes) {
         return res.status(400).send('Invalid payload');
       }
@@ -43,8 +44,8 @@ class Handler {
 
   async createLookupCode(req, res, next) {
     try {
-      let { body } = req;
-      let resp = await newService.createLookupCode(body);
+      const { body } = req;
+      const resp = await newService.createLookupCode(body);
       return res
         .status(200)
         .json(
@@ -175,7 +176,7 @@ class Handler {
   async createEnv(req, res) {
     try {
       const { body } = req;
-      let env = await newService.getEnv(body.CODE);
+      const env = await newService.getEnv(body.CODE);
       console.log(env)
       if (env) {
         return res.status(400).json(apiResponse.FAILURE_RESP({}, {
@@ -203,7 +204,7 @@ class Handler {
   async updateEnv(req, res) {
     try {
       const { body } = req;
-      let env = await newService.getEnv(body.CODE);
+      const env = await newService.getEnv(body.CODE);
       console.log(env)
       if (!env) {
         return res.status(404).json(apiResponse.FAILURE_RESP({}, {
@@ -211,7 +212,7 @@ class Handler {
           message: "Env not found"
         }, "Env not found error"))
       }
-      let query = {
+      const query = {
         CODE: env.CODE
       }
 
