@@ -41,14 +41,9 @@
       },
       "exclude": [
         "apps/backend_application-e2e/**/*",
-        "apps/jobs-e2e/**/*",
-        "apps/courses-e2e/**/*",
-        "apps/scholarships-e2e/**/*",
-        "apps/file-upload-e2e/**/*",
-        "apps/bullmq-service-e2e/**/*",
-        "apps/kafka-service-e2e/**/*",
-        "apps/elastic-search-e2e/**/*",
-        "apps/scheduler-service-e2e/**/*"
+        "apps/ondc-jobs-e2e/**/*",
+        "apps/ondc-courses-e2e/**/*",
+        "apps/ondc-network-router-e2e/**/*"
       ]
     }
   ],

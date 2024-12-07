@@ -12,7 +12,7 @@ const paginationSchema = {
 };
 
 const sortingSchema = {
-    sort_by: z.enum(['price', 'ratings', 'name']).optional(),
+    sort_by: z.enum(['price', 'rating', 'name']).optional(),
     order: z.enum(['asc', 'desc']).optional()
 };
 

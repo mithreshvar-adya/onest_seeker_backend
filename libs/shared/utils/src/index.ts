@@ -48,5 +48,7 @@ export * from './lib/middleware/app_live_logs'
 export * from './lib/middleware/custom_logger'
 export * from './lib/middleware/version_router'
 
+export * from './lib/context_factory'
+
 export * from './lib/ondc_signature/constant'
 export * from './lib/ondc_signature/authentication_and_validation'

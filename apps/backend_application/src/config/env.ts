@@ -9,8 +9,10 @@ interface GlobalEnvConfig {
 
 export const GlobalEnv: GlobalEnvConfig = {
     PORT: 4021,
-    MONGO_DB_URL: "mongodb://myUser:myPassword@4.240.98.192:27020/Onest_seeker",
-    MONGO_DB_NAME: "Onest_seeker",
+    MONGO_DB_URL: "mongodb+srv://mithreshvarmsa:dQef6Nab7NFeCP3Q@cluster0.vyw9a.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    MONGO_DB_NAME: "onest_seeker_app",
+    // MONGO_DB_URL: "mongodb://myUser:myPassword@4.240.98.192:27020/Onest_seeker",
+    // MONGO_DB_NAME: "Onest_seeker",
     COMMON_POSTGRESS_URL: "postgres://postgres:password@localhost:5432/new_testing_poc?schema=public",
     JWT_SECRET: "yNVrBBM+oAOWOEcXPFjJuvXXpUq/4XR1KuSGX/i+slF+oE/geu2uW25PXjfWS9pwjmTry3WXn7q0DH7I+vNSjw==",
     EXPIRY_TIME: "3d",

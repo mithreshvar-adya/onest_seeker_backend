@@ -276,28 +276,52 @@ class Service {
         }
       ]
 
+      // const employmentTypes = [
+      //   {
+      //     "value": "full-time",
+      //     "name": "Full Time"
+      //   },
+      //   {
+      //     "value": "part-time",
+      //     "name": "Part Time"
+      //   },
+      //   {
+      //     "value": "temporary",
+      //     "name": "Temporary"
+      //   },
+      //   {
+      //     "value": "contract",
+      //     "name": "Contract"
+      //   },
+      //   {
+      //     "value": "consultant",
+      //     "name": "Consultant"
+      //   }
+      // ]
+
       const employmentTypes = [
         {
-          "value": "full-time",
+          "value": "Full Time",
           "name": "Full Time"
         },
         {
-          "value": "part-time",
+          "value": "Part Time",
           "name": "Part Time"
         },
         {
-          "value": "temporary",
+          "value": "Temporary",
           "name": "Temporary"
         },
         {
-          "value": "contract",
+          "value": "Contract",
           "name": "Contract"
         },
         {
-          "value": "consultant",
+          "value": "Consultant",
           "name": "Consultant"
         }
       ]
+
       const response = [
         {
           key: "job_fulfilment_type",

@@ -1,0 +1,56 @@
+{
+  "name": "ondc-network-router",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/ondc-network-router/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/ondc-network-router",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "apps/ondc-network-router/src/main.ts",
+        "tsConfig": "apps/ondc-network-router/tsconfig.app.json",
+        "assets": ["apps/ondc-network-router/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "ondc-network-router:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "ondc-network-router:build:development"
+        },
+        "production": {
+          "buildTarget": "ondc-network-router:build:production"
+        }
+      }
+    }
+  }
+}

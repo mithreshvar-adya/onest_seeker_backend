@@ -34,69 +34,69 @@ const commonProtocolAPI = async (baseUrl:string, action:string, data:any, subscr
 
     CustomLogs.writeRetailLogsToONDC(JSON.stringify(data), action)
     
-    try {
-        const startTimeInNanoSeconds = process.hrtime.bigint();
-        let api_response = await axios(api_request);
-        const endTimeInNanoSeconds = process.hrtime.bigint();
-        console.log("Protocol Base url------>",baseUrl);
+    // try {
+    //     const startTimeInNanoSeconds = process.hrtime.bigint();
+    //     let api_response = await axios(api_request);
+    //     const endTimeInNanoSeconds = process.hrtime.bigint();
+    //     console.log("Protocol Base url------>",baseUrl);
         
-        console.log("===========CommonProtocolAPI_Log=============",api_response?.data);
+    //     console.log("===========CommonProtocolAPI_Log=============",api_response?.data);
 
-        let response = {
-            status: api_response?.status,
-            statusText: api_response?.statusText || "OK",
-            context: data?.context,
-            message: api_response?.data?.message,
-            error: api_response?.data?.error
-        }
-        try{
-            console.log("Telemetry ----------------->");
+    //     let response = {
+    //         status: api_response?.status,
+    //         statusText: api_response?.statusText || "OK",
+    //         context: data?.context,
+    //         message: api_response?.data?.message,
+    //         error: api_response?.data?.error
+    //     }
+    //     try{
+    //         console.log("Telemetry ----------------->");
             
-            let telemetry_data={
-                start_time:startTimeInNanoSeconds.toString(),
-                end_time:endTimeInNanoSeconds.toString(),
-                context:data?.context
-            }
+    //         let telemetry_data={
+    //             start_time:startTimeInNanoSeconds.toString(),
+    //             end_time:endTimeInNanoSeconds.toString(),
+    //             context:data?.context
+    //         }
     
-            await telemetry(telemetry_data)
-        }
-        catch (err) {
-            console.log("Error in telemetry ===>>>")
-        }
+    //         await telemetry(telemetry_data)
+    //     }
+    //     catch (err) {
+    //         console.log("Error in telemetry ===>>>")
+    //     }
         
-        return response;
-    } catch (err:any) {
-        console.log("Error in protocol=====>>>>", err?.response?.data);
-        if(err?.response?.data?.error?.code=="40001"){
-            let response = {
-                statusText: "Failure",
-                context: data?.context,
-                message: {
-                    ack: {
-                        status: "NACK"
-                    }
-                },
-                error: {
-                    type: "Action not applicable",
-                    code: "40001",
-                    path: "",
-                    message: "API endpoint is not implemented by the BPP"
-                }
-            }
-            return response
-        }
-        let response = {
-            statusText: "Failure",
-            context: data?.context,
-            message: {
-                ack: {
-                    status: "NACK"
-                }
-            },
-            error: err?.response?.data
-        }
-        return response
-    }
+    //     return response;
+    // } catch (err:any) {
+    //     console.log("Error in protocol=====>>>>", err?.response?.data);
+    //     if(err?.response?.data?.error?.code=="40001"){
+    //         let response = {
+    //             statusText: "Failure",
+    //             context: data?.context,
+    //             message: {
+    //                 ack: {
+    //                     status: "NACK"
+    //                 }
+    //             },
+    //             error: {
+    //                 type: "Action not applicable",
+    //                 code: "40001",
+    //                 path: "",
+    //                 message: "API endpoint is not implemented by the BPP"
+    //             }
+    //         }
+    //         return response
+    //     }
+    //     let response = {
+    //         statusText: "Failure",
+    //         context: data?.context,
+    //         message: {
+    //             ack: {
+    //                 status: "NACK"
+    //             }
+    //         },
+    //         error: err?.response?.data
+    //     }
+    //     return response
+    // }
 }
 
 const telemetry = async (data: any) => {

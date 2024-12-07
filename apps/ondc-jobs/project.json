@@ -1,0 +1,56 @@
+{
+  "name": "ondc-jobs",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/ondc-jobs/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/ondc-jobs",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "apps/ondc-jobs/src/main.ts",
+        "tsConfig": "apps/ondc-jobs/tsconfig.app.json",
+        "assets": ["apps/ondc-jobs/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "ondc-jobs:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "ondc-jobs:build:development"
+        },
+        "production": {
+          "buildTarget": "ondc-jobs:build:production"
+        }
+      }
+    }
+  }
+}
