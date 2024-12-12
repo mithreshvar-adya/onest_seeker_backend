@@ -72,7 +72,7 @@ class Service {
                     subscriber_ukid: BAP_KEYS.LEARNING_UNIQUE_KEY_ID,
                     subscriber_private_key: BAP_KEYS.PRIVATE_KEY
                 }
-                const base_url = ONDC_LAYER_BASE_URL.base_url + "/course/search"
+                const base_url = ONDC_LAYER_BASE_URL.base_url + "/ondc_layer/course/search"
                 console.log("base_url", base_url);
 
                 const resp = await axios.post(base_url, payload, { headers })

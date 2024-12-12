@@ -90,14 +90,14 @@ class Service {
                 };
 
                 const payload = {
-                    base_url: protocol_context?.bap_uri,
+                    base_url: protocol_context?.bpp_uri,
                     action: ENUM_ACTIONS.SELECT,
                     data: request_payload,
                     subscriber_id: protocol_context?.bap_id,
-                    subscriber_ukid: BAP_KEYS.JOB_UNIQUE_KEY_ID,
+                    subscriber_ukid: BAP_KEYS.LEARNING_UNIQUE_KEY_ID,
                     subscriber_private_key: BAP_KEYS.PRIVATE_KEY
                 }
-                const base_url = ONDC_LAYER_BASE_URL.base_url + "/course/select"
+                const base_url = ONDC_LAYER_BASE_URL.base_url + "/ondc_layer/course/select"
                 console.log("base_url", base_url);
 
                 const resp = await axios.post(base_url, payload, { headers })

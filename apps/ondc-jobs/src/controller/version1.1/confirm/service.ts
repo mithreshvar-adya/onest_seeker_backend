@@ -1,4 +1,4 @@
-import { ENUM_ACTIONS, BAP_KEYS, JobCache } from "@adya/shared";
+import { ENUM_ACTIONS, BAP_KEYS, JobCache, ONDC_LAYER_BASE_URL } from "@adya/shared";
 import { Jobs } from "@adya/shared";
 import { apiResponse } from '@adya/shared'
 import axios from "axios";
@@ -73,15 +73,38 @@ class Service {
 
             await job_module.update(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, query, orderData);
 
-            let resp = await commonProtocolAPI(
-                protocol_context.bpp_uri,
-                ENUM_ACTIONS.CONFIRM,
-                request_payload,
-                protocol_context.bap_id,
-                BAP_KEYS.JOB_UNIQUE_KEY_ID,
-                BAP_KEYS.PRIVATE_KEY
-            )
-            return resp
+            // let resp = await commonProtocolAPI(
+            //     protocol_context.bpp_uri,
+            //     ENUM_ACTIONS.CONFIRM,
+            //     request_payload,
+            //     protocol_context.bap_id,
+            //     BAP_KEYS.JOB_UNIQUE_KEY_ID,
+            //     BAP_KEYS.PRIVATE_KEY
+            // )
+            // return resp
+
+            try {
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+              
+                const payload = {
+                    base_url: protocol_context.bpp_uri,
+                    action: ENUM_ACTIONS.CONFIRM,
+                    data: request_payload,
+                    subscriber_id: protocol_context.bap_id,
+                    subscriber_ukid: BAP_KEYS.JOB_UNIQUE_KEY_ID,
+                    subscriber_private_key: BAP_KEYS.PRIVATE_KEY
+                }
+                const base_url = ONDC_LAYER_BASE_URL.base_url + "/ondc_layer/job/confirm"
+                console.log("base_url", base_url);
+              
+                const resp = await axios.post(base_url, payload, { headers })
+                console.log("ondc layer resp", resp?.data)
+                return resp?.data
+              } catch (err) {
+                  console.log("Error ===>>>", err);
+              }
 
             // let reqBody = {
             //     bpp_uri: protocol_context.bpp_uri,

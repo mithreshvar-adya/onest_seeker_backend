@@ -106,7 +106,7 @@ export const validateSearchRequest = async (req: any, res: any, next: any) => {
         }
 
 
-        const base_url = ONDC_LAYER_BASE_URL.base_url + "/" + domain + "/" + data?.context?.action
+        const base_url = ONDC_LAYER_BASE_URL.base_url + "/ondc_layer/" + domain + "/" + data?.context?.action
         console.log("base_url", base_url);
         try {
             const api_response = await axios.post(base_url, data, axiosConfig);

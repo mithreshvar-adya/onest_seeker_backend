@@ -71,7 +71,7 @@ class Service {
                     subscriber_ukid: BAP_KEYS.JOB_UNIQUE_KEY_ID,
                     subscriber_private_key: BAP_KEYS.PRIVATE_KEY
                 }
-                const base_url = ONDC_LAYER_BASE_URL.base_url + "/job/select"
+                const base_url = ONDC_LAYER_BASE_URL.base_url + "/ondc_layer/job/select"
                 console.log("base_url", base_url);
 
                 const resp = await axios.post(base_url, payload, { headers })

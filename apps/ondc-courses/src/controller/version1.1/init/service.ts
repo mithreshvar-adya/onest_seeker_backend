@@ -1,8 +1,9 @@
-import { commonProtocolAPI } from "@adya/shared";
+import { commonProtocolAPI, ONDC_LAYER_BASE_URL } from "@adya/shared";
 import { ENUM_ACTIONS,BAP_KEYS } from "@adya/shared";
 import { CourseOrder } from "@adya/shared";
 import { User } from "@adya/shared";
 import { GlobalEnv } from "../../../config/env";
+import axios from "axios";
 
 const course_order = CourseOrder.getInstance()
 const user_model = User.getInstance()
@@ -96,16 +97,41 @@ class Service {
             };
             await course_order.update(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, query, orderData);
 
-            let resp = await commonProtocolAPI(
-                protocol_context.bpp_uri,
-                ENUM_ACTIONS.INIT,
-                request_payload,
-                protocol_context.bap_id,
-                BAP_KEYS.LEARNING_UNIQUE_KEY_ID,
-                BAP_KEYS.PRIVATE_KEY
-            )
+            console.log("dlslk",JSON.stringify(request_payload));
+            
+            // let resp = await commonProtocolAPI(
+            //     protocol_context.bpp_uri,
+            //     ENUM_ACTIONS.INIT,
+            //     request_payload,
+            //     protocol_context.bap_id,
+            //     BAP_KEYS.LEARNING_UNIQUE_KEY_ID,
+            //     BAP_KEYS.PRIVATE_KEY
+            // )
 
-            return resp
+            // return resp
+
+
+            try {
+              const headers = {
+                  'Content-Type': 'application/json'
+              };
+
+              const payload = {
+                  base_url: protocol_context?.bpp_uri,
+                  action: ENUM_ACTIONS.INIT,
+                  data: request_payload,
+                  subscriber_id: protocol_context?.bap_id,
+                  subscriber_ukid: BAP_KEYS.LEARNING_UNIQUE_KEY_ID,
+                  subscriber_private_key: BAP_KEYS.PRIVATE_KEY
+              }
+              const base_url = ONDC_LAYER_BASE_URL.base_url + "/ondc_layer/course/init"
+              console.log("base_url", base_url);
+
+              const resp = await axios.post(base_url, payload, { headers })
+              return resp?.data
+          } catch (err) {
+              console.log("Error ===>>>", err);
+          }
 
           //   let reqBody = {
           //     bpp_uri: protocol_context.bpp_uri,

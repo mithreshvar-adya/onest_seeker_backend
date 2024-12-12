@@ -1,4 +1,4 @@
-import { commonProtocolAPI } from "@adya/shared";
+import { commonProtocolAPI, ONDC_LAYER_BASE_URL } from "@adya/shared";
 import { ENUM_ACTIONS, BAP_KEYS } from "@adya/shared";
 import { CourseOrder, CourseCache } from "@adya/shared";
 import { apiResponse } from "@adya/shared";
@@ -32,8 +32,9 @@ class Service {
             const courseOrder = await course_order.findOne(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, query)
             const onInitpayments = courseOrder?.oninit_resp?.message?.order?.payments
             const lastPaymentStatus = onInitpayments ? onInitpayments[onInitpayments.length - 1]?.status : "NOT-PAID";
-
+            
             message.order.billing = courseOrder?.billing
+            console.log("courseOrder",JSON.stringify(courseOrder?.oninit_resp));
             const confirm_fulfillments=courseOrder?.oninit_resp?.message?.order?.fulfillments
             confirm_fulfillments.forEach(fulfillment => {
                 // Remove the 'type' property
@@ -83,15 +84,37 @@ class Service {
 
             await course_order.update(GlobalEnv.MONGO_DB_URL, GlobalEnv.MONGO_DB_NAME, query, orderData);
 
-            const resp = await commonProtocolAPI(
-                protocol_context.bpp_uri,
-                ENUM_ACTIONS.CONFIRM,
-                request_payload,
-                protocol_context.bap_id,
-                BAP_KEYS.LEARNING_UNIQUE_KEY_ID,
-                BAP_KEYS.PRIVATE_KEY
-            )
-            return resp
+            // const resp = await commonProtocolAPI(
+            //     protocol_context.bpp_uri,
+            //     ENUM_ACTIONS.CONFIRM,
+            //     request_payload,
+            //     protocol_context.bap_id,
+            //     BAP_KEYS.LEARNING_UNIQUE_KEY_ID,
+            //     BAP_KEYS.PRIVATE_KEY
+            // )
+            // return resp
+
+            try {
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+  
+                const payload = {
+                    base_url: protocol_context?.bpp_uri,
+                    action: ENUM_ACTIONS.CONFIRM,
+                    data: request_payload,
+                    subscriber_id: protocol_context?.bap_id,
+                    subscriber_ukid: BAP_KEYS.LEARNING_UNIQUE_KEY_ID,
+                    subscriber_private_key: BAP_KEYS.PRIVATE_KEY
+                }
+                const base_url = ONDC_LAYER_BASE_URL.base_url + "/ondc_layer/course/confirm"
+                console.log("base_url", base_url);
+  
+                const resp = await axios.post(base_url, payload, { headers })
+                return resp?.data
+            } catch (err) {
+                console.log("Error ===>>>", err);
+            }
 
             // let reqBody = {
             //     bpp_uri: protocol_context.bpp_uri,

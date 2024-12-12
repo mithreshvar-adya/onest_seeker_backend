@@ -1,5 +1,5 @@
 
-import { telemetry } from "@adya/shared";
+import { ONDC_LAYER_BASE_URL, telemetry } from "@adya/shared";
 import service from './service';
 import { v4 as uuidv4 } from 'uuid';
 import { apiResponse } from "@adya/shared";
@@ -8,6 +8,7 @@ import { contextFactory } from "@adya/shared";
 import { ENUM_ACTIONS } from "@adya/shared";
 import { OnActions,CourseOrder } from "@adya/shared";
 import { GlobalEnv } from '../../../config/env';
+import axios from "axios";
 
 const newService = service.getInstance();
 const course_order = CourseOrder.getInstance()
@@ -108,7 +109,12 @@ class Handler {
                             message: 'Provider details mismatch',
                         },
                     }
-                    await telemetry(telemetry_data)
+                    // await telemetry(telemetry_data)
+                    const  headers= {
+                        'Content-Type': 'application/json'
+                    };
+                     let base_url = ONDC_LAYER_BASE_URL.base_url+"/telemetry"
+                     await axios.post(base_url, telemetry_data, { headers })
                 }catch (err) {
                     console.log("Error in on_action failure telemetry===>>>")           
                 }
@@ -139,7 +145,12 @@ class Handler {
                             message: 'Item details mismatch',
                         },
                     }
-                    await telemetry(telemetry_data)
+                    // await telemetry(telemetry_data)
+                    const  headers= {
+                        'Content-Type': 'application/json'
+                    };
+                     let base_url = ONDC_LAYER_BASE_URL.base_url+"/telemetry"
+                     await axios.post(base_url, telemetry_data, { headers })
                 }catch (err) {
                     console.log("Error in on_action failure telemetry===>>>")           
                 }
@@ -164,7 +175,12 @@ class Handler {
                 end_time:telemetry_end_time.toString(),
                 context:telemetry_context
             }
-            await telemetry(telemetry_data)
+            // await telemetry(telemetry_data)
+            const  headers= {
+                'Content-Type': 'application/json'
+            };
+             let base_url = ONDC_LAYER_BASE_URL.base_url+"/telemetry"
+             await axios.post(base_url, telemetry_data, { headers })
         }catch (err) {
             console.log("Error in telemetry===>>>")           
         }

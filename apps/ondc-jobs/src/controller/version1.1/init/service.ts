@@ -1,9 +1,10 @@
-import { commonProtocolAPI } from "@adya/shared";
+import { commonProtocolAPI, ONDC_LAYER_BASE_URL } from "@adya/shared";
 import { ENUM_ACTIONS, BAP_KEYS } from "@adya/shared";
 import { Jobs } from "@adya/shared";
 import { User, UserProfile,apiResponse } from "@adya/shared";
 import { GlobalEnv } from "../../../config/env";
 import axios from "axios"; 
+import { json } from "node:stream/consumers";
 
 const job_module = new Jobs()
 const user_model = new User()
@@ -82,7 +83,7 @@ class Service {
                 "person": {
                   "name": application_details?.applicant_name || userData?.first_name +" "+ userData?.last_name,
                   "age": age.toString(),
-                  "gender": userData?.gender,
+                  "gender": userData?.gender || "",
                   "skills": application_details?.skills,
                   "languages": application_details?.languages,
                   "tags": [
@@ -140,6 +141,9 @@ class Service {
               }
             }
           ]
+
+          console.log("dfsa",JSON.stringify(fulfillmentData));
+          
             
             message.order.fulfillments = fulfillmentData
 
@@ -185,15 +189,38 @@ class Service {
           //     return (err_resp);
           // }
 
-          let resp = await commonProtocolAPI(
-            protocol_context.bpp_uri,
-            ENUM_ACTIONS.INIT,
-            request_payload,
-            protocol_context.bap_id,
-            BAP_KEYS.JOB_UNIQUE_KEY_ID,
-            BAP_KEYS.PRIVATE_KEY
-        )
-        return resp
+        //   let resp = await commonProtocolAPI(
+        //     protocol_context.bpp_uri,
+        //     ENUM_ACTIONS.INIT,
+        //     request_payload,
+        //     protocol_context.bap_id,
+        //     BAP_KEYS.JOB_UNIQUE_KEY_ID,
+        //     BAP_KEYS.PRIVATE_KEY
+        // )
+        // return resp
+
+            try {
+              const headers = {
+                  'Content-Type': 'application/json'
+              };
+            
+              const payload = {
+                  base_url: protocol_context.bpp_uri,
+                  action: ENUM_ACTIONS.INIT,
+                  data: request_payload,
+                  subscriber_id: protocol_context.bap_id,
+                  subscriber_ukid: BAP_KEYS.JOB_UNIQUE_KEY_ID,
+                  subscriber_private_key: BAP_KEYS.PRIVATE_KEY
+              }
+              const base_url = ONDC_LAYER_BASE_URL.base_url + "/ondc_layer/job/init"
+              console.log("base_url", base_url);
+            
+              const resp = await axios.post(base_url, payload, { headers })
+              console.log("ondc layer resp", resp?.data)
+              return resp?.data
+            } catch (err) {
+                console.log("Error ===>>>", err);
+            }
         }
         catch (err) {
             console.log("Service Error in job init=====", err)

@@ -1,4 +1,4 @@
-import { ENUM_ACTIONS, BAP_KEYS } from "@adya/shared";
+import { ENUM_ACTIONS, BAP_KEYS, ONDC_LAYER_BASE_URL } from "@adya/shared";
 import { Jobs } from "@adya/shared";
 import { commonProtocolAPI } from "@adya/shared";
 import { apiResponse } from "@adya/shared";
@@ -34,15 +34,38 @@ class Service {
                 bap_id: protocol_context.bap_id
             }
 
-            const resp = await commonProtocolAPI(
-                protocol_context.bpp_uri,
-                ENUM_ACTIONS.STATUS,
-                request_payload,
-                protocol_context.bap_id,
-                BAP_KEYS.JOB_UNIQUE_KEY_ID,
-                BAP_KEYS.PRIVATE_KEY
-            )
-            return resp
+            // const resp = await commonProtocolAPI(
+            //     protocol_context.bpp_uri,
+            //     ENUM_ACTIONS.STATUS,
+            //     request_payload,
+            //     protocol_context.bap_id,
+            //     BAP_KEYS.JOB_UNIQUE_KEY_ID,
+            //     BAP_KEYS.PRIVATE_KEY
+            // )
+            // return resp
+
+            try {
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+              
+                const payload = {
+                    base_url: protocol_context.bpp_uri,
+                    action: ENUM_ACTIONS.STATUS,
+                    data: request_payload,
+                    subscriber_id: protocol_context.bap_id,
+                    subscriber_ukid: BAP_KEYS.JOB_UNIQUE_KEY_ID,
+                    subscriber_private_key: BAP_KEYS.PRIVATE_KEY
+                }
+                const base_url = ONDC_LAYER_BASE_URL.base_url + "/ondc_layer/job/status"
+                console.log("base_url", base_url);
+              
+                const resp = await axios.post(base_url, payload, { headers })
+                console.log("ondc layer resp", resp?.data)
+                return resp?.data
+              } catch (err) {
+                  console.log("Error ===>>>", err);
+              }
 
         }
         catch (err) {
