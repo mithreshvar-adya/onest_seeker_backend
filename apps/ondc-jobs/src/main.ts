@@ -5,6 +5,7 @@ import logger from "morgan";
 import { WebLogger, apiResponse, customLogger, htmlContent, live_logs, logsAuth } from "@adya/shared";
 import NetworkjobRouter from './controller/router'
 import { GlobalEnv } from './config/env';
+import axios from 'axios';
 
 export default async function init(app:any){
   try{
@@ -47,6 +48,12 @@ export default async function init(app:any){
     const app_server = app.listen(GlobalEnv?.PORT || 3000, () => {
       console.log(`Server Listening on port : ${GlobalEnv?.PORT}`);
     });
+    try{
+      await axios.post("http://localhost:4020/set_job_env", GlobalEnv)
+      console.log("Set Env Success ====>>>")
+    }catch(error){
+        console.log("Error ====>>> Set Env Error")
+    }
     WebLogger(app_server);
   }
   catch(err){

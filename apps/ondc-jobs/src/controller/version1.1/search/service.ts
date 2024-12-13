@@ -65,13 +65,16 @@ class Service {
                     'Content-Type': 'application/json'
                 };
 
-                const payload = {
-                    base_url: bpp_uri,
-                    action: ENUM_ACTIONS.SEARCH,
-                    data: request_payload,
-                    subscriber_id: protocol_context.bap_id,
-                    subscriber_ukid: BAP_KEYS.JOB_UNIQUE_KEY_ID,
-                    subscriber_private_key: BAP_KEYS.PRIVATE_KEY
+                // const payload = {
+                //     base_url: bpp_uri,
+                //     action: ENUM_ACTIONS.SEARCH,
+                //     data: request_payload,
+                //     subscriber_id: protocol_context.bap_id,
+                //     subscriber_ukid: BAP_KEYS.JOB_UNIQUE_KEY_ID,
+                //     subscriber_private_key: BAP_KEYS.PRIVATE_KEY
+                // }
+                let payload = {
+                    data:request_payload               
                 }
                 const base_url = ONDC_LAYER_BASE_URL.base_url + "/ondc_layer/job/search"
                 console.log("base_url", base_url);

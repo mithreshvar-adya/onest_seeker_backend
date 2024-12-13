@@ -5,6 +5,7 @@ import logger from "morgan";
 import { WebLogger, apiResponse, customLogger, htmlContent, live_logs, logsAuth } from "@adya/shared";
 import NetworkCourseRouter from './controller/router'
 import { GlobalEnv } from './config/env'
+import axios from 'axios';
 
 export default async function init(app: any) {
   try {
@@ -52,6 +53,12 @@ export default async function init(app: any) {
     const app_server = app.listen(GlobalEnv.PORT || 3000, () => {
       console.log(`Onest_Courses server listening on port : ${GlobalEnv.PORT}`);
     });
+    try{
+      await axios.post("http://localhost:4020/set_course_env", GlobalEnv)
+      console.log("Set Env Success ====>>>")
+    }catch(error){
+        console.log("Error ====>>> Set Env Error")
+    }
     WebLogger(app_server);
   }
   catch (err) {

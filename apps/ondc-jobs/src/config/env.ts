@@ -10,9 +10,9 @@ export const GlobalEnv = {
     "ONDC_DETAILS": {
         "BAP_ID": "ondc-jobs-bap.skillsetu.co",
         "BAP_URL": "https://ondc-jobs-bap.skillsetu.co/api/v1/onest_ondc/bap",
-        "BAP_UNIQUE_KEY_ID": "2a7dbc88-b3b6-4fd1-907f-facfd802cb78",
-        "BAP_PRIVATE_KEY": "tJ4CAoxBj+mCI0kryqlhTgPapkGI19FOt//Mm798XtPPx3tW+1HH7euFU9/BR5uwjl0HeZk5SdISH7WOFz4CCg==",
-        "BAP_PUBLIC_KEY": "z8d7VvtRx+3rhVPfwUebsI5dB3mZOUnSEh+1jhc+Ago=",
+        "BAP_UNIQUE_KEY_ID": "cf6d50e2-f8bc-4b12-ab65-2d8db0671d24",
+        "BAP_PRIVATE_KEY": "JNOMEJZPIaBZmjjEBsAdm11u6M5x8lYyyjbtWG61b/IZOm+u1p83ZRFnSfnugOlbJWA31vFyKxUVC3xSYmUi2g==",
+        "BAP_PUBLIC_KEY": "MCowBQYDK2VuAyEAvVEyZY91O2yV8w8/CAwVDAnqIZDJJUPdLUUKwLo3K0M=",
         "ENCRYPTION_PUBLIC_KEY": "",
         "ENCRYPTION_PRIVATE_KEY": "",
         "ONDC_PUBLIC_KEY": "",
