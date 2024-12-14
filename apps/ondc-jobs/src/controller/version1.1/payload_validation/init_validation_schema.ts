@@ -15,7 +15,7 @@ const initContext = {
     ],
     "additionalProperties": true,
     "properties": {
-        "domain": { "enum": ["ONDC:ONEST10"] },
+        "domain": { "enum": ["onest:work-opportunities"] },
         "action": {     
             "enum": ["on_init"]
         },

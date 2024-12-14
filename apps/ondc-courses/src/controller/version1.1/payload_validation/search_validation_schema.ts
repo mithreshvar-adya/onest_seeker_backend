@@ -15,7 +15,7 @@ const searchContext = {
     ],
     "additionalProperties": true,
     "properties": {
-        "domain": { "enum": ["ONDC:ONEST11"] },
+        "domain": { "enum": ["onest:learning-experiences"] },
         "action": { 
             "enum": ["on_search"] 
         },

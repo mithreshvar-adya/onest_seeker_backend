@@ -16,7 +16,7 @@ const statusContext = {
     "additionalProperties": true,
 
     "properties": {
-        "domain": { "enum": ["ONDC:ONEST10"] },
+        "domain": { "enum": ["onest:work-opportunities"] },
         "action": { "enum": ["on_status"] },
         "version": { "type": "string" },
         "bap_id": { "type": "string" },

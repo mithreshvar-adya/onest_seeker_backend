@@ -4,8 +4,8 @@ export function enums(): string {
 
 
 export enum ONEST_DOMAINS {
-  "COURSE" = "ONDC:ONEST11",
-  "JOB" = "ONDC:ONEST10",
+  "COURSE" = "onest:learning-experiences",
+  "JOB" = "onest:work-opportunities",
   "SCHOLARSHIP" = "onest:financial-support",
   "MENTOR"="onest:expert-connect"
 }

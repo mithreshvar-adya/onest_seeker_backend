@@ -40,7 +40,7 @@ class ContextFactoryClass {
         var ttl = contextObject?.ttl || null
 
         if (ttl == null) {
-            if (contextObject.domain === "ONDC:ONEST10") {
+            if (contextObject.domain === "onest:work-opportunities") {
                 switch (action) {
                     case "search":
                         ttl = "PT30S";
@@ -106,15 +106,15 @@ class ContextFactoryClass {
 
         console.log("domain --------------->", contextObject.domain);
 
-        if (contextObject.domain === "ONDC:ONEST10") {
+        if (contextObject.domain === "onest:work-opportunities") {
             console.log("Inside jobs context--------------->");
 
-            contextObject.bap_id = "ondc-jobs-bap.skillsetu.co",
-                contextObject.bap_uri = "https://ondc-jobs-bap.skillsetu.co/api/v1/onest_ondc/bap"
+            contextObject.bap_id = "onest-jobs-bap.skillsetu.co",
+                contextObject.bap_uri = "https://onest-jobs-bap.skillsetu.co/api/v1/onest_ondc/bap"
         } else {
             console.log("Inside courses context--------------->");
-            contextObject.bap_id = "ondc-bap.skillsetu.co",
-                contextObject.bap_uri = "https://ondc-bap.skillsetu.co/api/v1/onest_ondc/bap"
+            contextObject.bap_id = "onest-bap.skillsetu.co",
+                contextObject.bap_uri = "https://onest-bap.skillsetu.co/api/v1/onest_ondc/bap"
         }
         console.log("updated");
 

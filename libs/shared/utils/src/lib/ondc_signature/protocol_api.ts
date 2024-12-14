@@ -128,11 +128,11 @@ const telemetry = async (data: any) => {
     let request_host=""
 
   
-    if(context?.domain=="ONDC:ONEST11"){
-         request_host=isProvider ? "https://ondc.skillsetu.co" : "https://ondc-bap.skillsetu.co"
+    if(context?.domain=="onest:learning-experiences"){
+         request_host=isProvider ? "https://onest.skillsetu.co" : "https://onest-bap.skillsetu.co"
        
     }else{
-        request_host=isProvider ? "https://ondc-jobs.skillsetu.co":"https://ondc-jobs-bap.skillsetu.co"
+        request_host=isProvider ? "https://onest-jobs.skillsetu.co":"https://onest-jobs-bap.skillsetu.co"
     }
     const observedTimeInNanoSeconds = process.hrtime.bigint();
 

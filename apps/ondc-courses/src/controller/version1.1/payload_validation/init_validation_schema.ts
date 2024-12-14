@@ -15,7 +15,7 @@ const initContext = {
     ],
     "additionalProperties": true,
     "properties": {
-        "domain": { "enum": ["ONDC:ONEST11"] },
+        "domain": { "enum": ["onest:learning-experiences"] },
         "action": { "enum": ["on_init"] },
         "version": { "type": "string" },
         "bap_id": { "type": "string" },
